@@ -659,6 +659,17 @@ function getCanvasScale() {
   return m ? parseFloat(m[1]) : 1;
 }
 
+function clientToCanvasCoords(clientX, clientY) {
+  const scaler = document.getElementById('canvas-scaler');
+  if (!scaler) return { x: clientX, y: clientY };
+  const rect = scaler.getBoundingClientRect();
+  const scale = getCanvasScale() || 1;
+  return {
+    x: (clientX - rect.left) / scale,
+    y: (clientY - rect.top)  / scale
+  };
+}
+
 function addTextLayer(props) {
   props = props || {};
   const id     = 'tl' + (nextLayerId++);
@@ -916,8 +927,9 @@ function addCanvasHandles(el, layer) {
       e.currentTarget.setPointerCapture(e.pointerId);
       isResizing      = true;
       resizeHandlePos = pos;
-      resizeStartX    = e.clientX;
-      resizeStartY    = e.clientY;
+      const startPos = clientToCanvasCoords(e.clientX, e.clientY);
+      resizeStartX    = startPos.x;
+      resizeStartY    = startPos.y;
       const lyr = textLayers.find(l => l.id === selectedLayerId);
       resizeOrigLayer = lyr ? { x: lyr.x, y: lyr.y, width: lyr.width, height: lyr.height || 400 } : null;
     });
@@ -1031,8 +1043,9 @@ function onLayerPointerDown(e) {
   // ── Set up drag state and capture pointer BEFORE any DOM mutations ──
   dragLayerId = id;
   isDragging  = false;
-  dragStartX  = e.clientX;
-  dragStartY  = e.clientY;
+  const startPos = clientToCanvasCoords(e.clientX, e.clientY);
+  dragStartX  = startPos.x;
+  dragStartY  = startPos.y;
   dragOrigX   = layer.x;
   dragOrigY   = layer.y;
   el.setPointerCapture(e.pointerId);
@@ -1043,15 +1056,15 @@ function onLayerPointerDown(e) {
 document.addEventListener('pointermove', e => {
   // ── Resize ──
   if (isResizing && selectedLayerId && resizeOrigLayer) {
-    const scale = getCanvasScale();
-    const dx    = (e.clientX - resizeStartX) / scale;
-    const dy    = (e.clientY - resizeStartY) / scale;
-    const orig  = resizeOrigLayer;
-    const layer = textLayers.find(l => l.id === selectedLayerId);
+    const cur    = clientToCanvasCoords(e.clientX, e.clientY);
+    const dx     = cur.x - resizeStartX;
+    const dy     = cur.y - resizeStartY;
+    const orig   = resizeOrigLayer;
+    const layer  = textLayers.find(l => l.id === selectedLayerId);
     if (!layer) return;
-    const pos      = resizeHandlePos;
-    const isTop    = pos === 'tl' || pos === 'tr';
-    const isBottom = pos === 'bl' || pos === 'br';
+    const handle = resizeHandlePos;
+    const isTop    = handle === 'tl' || handle === 'tr';
+    const isBottom = handle === 'bl' || handle === 'br';
     const isRight  = pos === 'tr' || pos === 'br' || pos === 'r';
     const isLeft   = pos === 'tl' || pos === 'bl';
     let newX = orig.x, newY = orig.y, newW = orig.width, newH = orig.height;
@@ -1075,14 +1088,15 @@ document.addEventListener('pointermove', e => {
   }
   // ── Move ──
   if (!dragLayerId) return;
-  const dx = e.clientX - dragStartX, dy = e.clientY - dragStartY;
+  const pos = clientToCanvasCoords(e.clientX, e.clientY);
+  const dx  = pos.x - dragStartX;
+  const dy  = pos.y - dragStartY;
   if (Math.abs(dx) + Math.abs(dy) > 3) isDragging = true;
   if (!isDragging) return;
-  const scale = getCanvasScale();
   const layer = textLayers.find(l => l.id === dragLayerId);
   if (!layer) return;
-  layer.x = Math.round(dragOrigX + dx / scale);
-  layer.y = Math.round(dragOrigY + dy / scale);
+  layer.x = Math.round(dragOrigX + dx);
+  layer.y = Math.round(dragOrigY + dy);
   const el = document.querySelector('[data-lid="' + dragLayerId + '"]');
   if (el) { el.style.left = layer.x + 'px'; el.style.top = layer.y + 'px'; el.classList.add('tl-dragging'); }
   positionFloatTb();
@@ -1154,31 +1168,47 @@ async function downloadPNG() {
   hideFloatTb();
   document.querySelectorAll('.txt-layer.tl-selected, .img-layer.tl-selected').forEach(el => el.classList.remove('tl-selected'));
 
-  const savedTransform = scaler.style.transform;
-  scaler.style.transform = 'scale(1)';
-  scaler.style.transformOrigin = 'top left';
+  // Keep onscreen rendered canvas untouched, and render export from a hidden clone to avoid visual zoom flicker.
+  const pinCanvas = document.getElementById('pin-canvas');
+  let exportCanvas = null;
+  if (pinCanvas) {
+    exportCanvas = pinCanvas.cloneNode(true);
+    exportCanvas.id = 'pin-canvas-export-copy';
+    exportCanvas.style.position = 'absolute';
+    exportCanvas.style.left = '0';
+    exportCanvas.style.top = '0';
+    exportCanvas.style.zIndex = '-9999';
+    exportCanvas.style.transform = 'scale(1)';
+    exportCanvas.style.transformOrigin = 'top left';
+    exportCanvas.style.width = '1000px';
+    exportCanvas.style.height = '1500px';
+    document.body.appendChild(exportCanvas);
 
-  let swirlImg = null, swirlSvg = null, swirlParent = null, swirlNext = null;
-
-  if (layoutMode === 'two') {
-    swirlSvg = document.getElementById('swirl-svg');
-    if (swirlSvg && swirlSvg.style.display !== 'none') {
-      swirlParent = swirlSvg.parentNode;
-      swirlNext   = swirlSvg.nextSibling;
-      const svgXml = new XMLSerializer().serializeToString(swirlSvg);
-      const svgUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgXml);
-      const svgBmp = new Image(150, 150); svgBmp.src = svgUrl;
-      await new Promise(r => { svgBmp.complete && svgBmp.naturalWidth ? r() : (svgBmp.onload = r, svgBmp.onerror = r); });
-      const offC = document.createElement('canvas'); offC.width = 150; offC.height = 150;
-      offC.getContext('2d').drawImage(svgBmp, 0, 0, 150, 150);
-      const pngUrl = offC.toDataURL('image/png');
-      swirlImg = document.createElement('img');
-      swirlImg.src = pngUrl;
-      swirlImg.className = swirlSvg.className;
-      swirlImg.style.cssText = swirlSvg.style.cssText;
-      swirlSvg.style.display = 'none';
-      swirlParent.insertBefore(swirlImg, swirlNext);
-      await new Promise(r => { swirlImg.complete && swirlImg.naturalWidth ? r() : (swirlImg.onload = r, swirlImg.onerror = r); });
+    // Convert swirl SVG to image in the clone for proper html2canvas rendering
+    if (layoutMode === 'two') {
+      const swirlSvg = exportCanvas.querySelector('#swirl-svg');
+      if (swirlSvg && swirlSvg.style.display !== 'none') {
+        const svgXml = new XMLSerializer().serializeToString(swirlSvg);
+        const svgUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgXml);
+        const svgBmp = new Image();
+        svgBmp.src = svgUrl;
+        await new Promise(r => { svgBmp.onload = r; svgBmp.onerror = r; });
+        const offC = document.createElement('canvas');
+        offC.width = 150;
+        offC.height = 150;
+        offC.getContext('2d').drawImage(svgBmp, 0, 0, 150, 150);
+        const pngUrl = offC.toDataURL('image/png');
+        const swirlImg = document.createElement('img');
+        swirlImg.src = pngUrl;
+        swirlImg.style.position = 'absolute';
+        swirlImg.style.left = '425px';
+        swirlImg.style.top = '690px';
+        swirlImg.style.width = '150px';
+        swirlImg.style.height = '150px';
+        swirlImg.style.opacity = '0.85';
+        swirlImg.style.zIndex = '10';
+        swirlSvg.parentNode.replaceChild(swirlImg, swirlSvg);
+      }
     }
   }
 
@@ -1189,7 +1219,7 @@ async function downloadPNG() {
     const scale  = exportMode === '2x' ? 2 : 1;
     const type   = exportMode === 'jpg' ? 'image/jpeg' : 'image/png';
     const qual   = exportMode === 'jpg' ? 0.92 : 1;
-    const canvas = await html2canvas(document.getElementById('pin-canvas'), {
+    const canvas = await html2canvas(exportCanvas || pinCanvas, {
       scale, useCORS: true, allowTaint: false, backgroundColor: null,
     });
     canvas.toBlob(blob => {
@@ -1208,9 +1238,7 @@ async function downloadPNG() {
     console.error(err);
     toast('Export failed - try again');
   } finally {
-    scaler.style.transform       = savedTransform;
-    scaler.style.transformOrigin = 'center center';
-    if (swirlSvg && swirlImg) { swirlSvg.style.display = ''; swirlImg.remove(); }
+    if (exportCanvas && exportCanvas.parentNode) exportCanvas.parentNode.removeChild(exportCanvas);
     if (selectedLayerId) {
       const el = document.querySelector('[data-lid="' + selectedLayerId + '"]');
       if (el) el.classList.add('tl-selected');
