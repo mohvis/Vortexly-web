@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Vortexly - Watch Pin Editor</title>
+<link rel="icon" type="image/png" href="img/Vortexly-logo.png">
+<script src="src/html2canvas.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Raleway:wght@300;400;500;700&family=Poppins:wght@300;400;500;700&family=Montserrat:wght@300;400;500;700&family=Inter:wght@300;400;500;700&family=Work+Sans:wght@300;400;500;700&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="src/style.css"/>
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ LEFT: EDITOR PANEL ============ -->
+  <aside id="editor-panel">
+
+    <!-- Header -->
+    <div class="phdr">
+      <div class="phdr-logo">
+        <img src="img/Vortexly-logo.png" alt="Vortexly" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      </div>
+      <div>
+        <div class="phdr-title">Vortexly</div>
+        <div class="phdr-sub">Watch Pin Editor</div>
+      </div>
+      <button id="theme-toggle" class="theme-btn" onclick="toggleDarkTheme()" aria-pressed="false" aria-label="Toggle dark theme" title="Toggle dark theme">
+        <svg viewBox="0 0 20 20" width="14" height="14" fill="none" aria-hidden="true">
+          <path d="M17 11.5A7 7 0 0 1 8.5 3a7.5 7.5 0 1 0 8.5 8.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mode switcher: 2 Images / 1 Image / Custom -->
+    <div class="mode-sw" role="group" aria-label="Layout mode">
+      <button class="msw-btn active" id="msw-two" onclick="setLayoutMode('two')" aria-pressed="true">
+        <svg viewBox="0 0 20 20" fill="none" width="12" height="12" aria-hidden="true"><rect x="1" y="2" width="8" height="16" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="2" width="8" height="16" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>
+        2 Images
+      </button>
+      <button class="msw-btn" id="msw-one" onclick="setLayoutMode('one')" aria-pressed="false">
+        <svg viewBox="0 0 20 20" fill="none" width="12" height="12" aria-hidden="true"><rect x="2" y="2" width="16" height="16" rx="1.5" stroke="currentColor" stroke-width="1.6"/><line x1="5" y1="13" x2="15" y2="13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="5" y1="16" x2="12" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        1 Image
+      </button>
+      <button class="msw-btn" id="msw-custom" onclick="setLayoutMode('custom')" aria-pressed="false">
+        <svg viewBox="0 0 20 20" fill="none" width="12" height="12" aria-hidden="true"><rect x="1" y="1" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="1" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="11" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="11" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+        Custom
+      </button>
+    </div>
+
+    <!-- ====== TWO-IMAGE PANEL ====== -->
+    <div id="panel-two">
+
+      <!-- TOP BRAND: Image -->
+      <div class="sec" id="sec-top" data-target="top">
+        <div class="sec-title">Top Brand &#8212; Image</div>
+        <div class="dz" id="dz-top">
+          <div class="dz-ph" id="ph-top">
+            <div class="dz-icon" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 28 28" fill="none"><rect x="2" y="5" width="24" height="18" rx="3" stroke="#c0b8b0" stroke-width="1.6"/><path d="M2 18l7-7 5 5 4-4 8 7" stroke="#c0b8b0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="19" cy="11" r="2.5" stroke="#c0b8b0" stroke-width="1.4"/></svg></div>
+            <div><b>Drop image here</b><span>Drag, paste or upload</span></div>
+            <div class="dz-hint">Top-left card</div>
+          </div>
+          <img class="dz-thumb" id="thumb-top" style="display:none" alt="Top brand image preview"/>
+        </div>
+        <div class="dz-row">
+          <button class="dz-btn" onclick="triggerUpload('top')" aria-label="Upload top image"><svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true"><path d="M7 1v8M3 5l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="13" x2="13" y2="13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Upload</button>
+          <button class="dz-btn" onclick="pasteTarget('top')" aria-label="Paste image for top slot"><svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true"><rect x="4" y="1" width="6" height="3" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M3 3h8a1 1 0 011 1v7a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.4"/></svg> Paste</button>
+          <button class="dz-btn" id="crop-top-btn" style="display:none" onclick="openCrop('top')" aria-label="Crop top image"><svg viewBox="0 0 14 14" width="11" height="11" fill="none" aria-hidden="true"><path d="M1 4V1h3M10 1h3v3M13 10v3h-3M4 13H1v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Crop</button>
+          <button class="dz-btn del" id="del-top" onclick="removeImage('top')" aria-label="Remove top image"><svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true"><path d="M2 3.5h10M5 3.5V2h4v1.5M4.5 3.5l.5 8h4l.5-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Remove</button>
+        </div>
+        <div class="img-adjust" id="adj-top">
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Zoom</span><input type="range" class="adj-slider" id="zoom-top" min="50" max="300" value="100" aria-label="Top image zoom" oninput="applyImgStyle('top')"/><span class="adj-val" id="zoom-top-val">100%</span></div>
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">X</span><input type="range" class="adj-slider" id="posx-top" min="0" max="100" value="50" aria-label="Top image horizontal position" oninput="applyImgStyle('top')"/><span class="adj-val" id="posx-top-val">50%</span></div>
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Y</span><input type="range" class="adj-slider" id="posy-top" min="0" max="100" value="50" aria-label="Top image vertical position" oninput="applyImgStyle('top')"/><span class="adj-val" id="posy-top-val">50%</span></div>
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Bright</span><input type="range" class="adj-slider" id="bright-top" min="50" max="150" value="100" aria-label="Top card brightness" oninput="applyFilter('top')"/><span class="adj-val" id="bright-top-val">100%</span></div>
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Contrast</span><input type="range" class="adj-slider" id="contrast-top" min="50" max="150" value="100" aria-label="Top card contrast" oninput="applyFilter('top')"/><span class="adj-val" id="contrast-top-val">100%</span></div>
+          <div class="adj-footer"><button class="adj-reset" onclick="resetImgStyle('top');resetFilter('top')">Reset</button></div>
+        </div>
+        <input type="file" id="file-top" accept="image/*" style="display:none" aria-label="Choose top image" onchange="onFileChange(this,'top')"/>
+      </div>
+
+      <!-- TOP BRAND: Labels -->
+      <div class="sec">
+        <div class="sec-title">Top Brand &#8212; Labels</div>
+        <div class="fields">
+          <div class="fr"><div class="fr-head"><label class="fl" for="in-top-eye">Eyebrow</label><input type="color" class="lbl-swatch" id="lc-top-eye" value="#b0a898" aria-label="Eyebrow text color" oninput="applyLabelColor('c-top-eye',this.value)"/></div><input class="fi" id="in-top-eye" type="text" value="The Original" oninput="sync('in-top-eye','c-top-eye')"/></div>
+          <div class="fr"><div class="fr-head"><label class="fl" for="in-top-brand">Brand Name</label><input type="color" class="lbl-swatch" id="lc-top-brand" value="#1a1814" aria-label="Brand name text color" oninput="applyLabelColor('c-top-brand',this.value)"/></div><textarea class="fi" id="in-top-brand" oninput="sync('in-top-brand','c-top-brand')">Patek
+Philippe</textarea></div>
+          <div class="fr"><label class="fl" for="fs-top-brand">Brand Name Size</label><div class="adj-row" style="margin-top:2px;"><input type="range" class="adj-slider" id="fs-top-brand" min="28" max="80" value="50" aria-label="Top brand name font size" oninput="applyFontSize('top-brand')"/><span class="adj-val" id="fs-top-brand-val">50px</span></div></div>
+          <div class="fr"><div class="fr-head"><label class="fl" for="in-top-model">Model</label><input type="color" class="lbl-swatch" id="lc-top-model" value="#7a7060" aria-label="Model text color" oninput="applyLabelColor('c-top-model',this.value)"/></div><input class="fi" id="in-top-model" type="text" value="Nautilus 5811" oninput="sync('in-top-model','c-top-model')"/></div>
+          <div class="fr"><div class="fr-head"><label class="fl" for="in-top-price">Price</label><input type="color" class="lbl-swatch" id="lc-top-price" value="#5a5248" aria-label="Price text color" oninput="applyLabelColor('c-top-price',this.value)"/></div><input class="fi" id="in-top-price" type="text" value="&#8377;1,20,00,000+" oninput="sync('in-top-price','c-top-price')"/></div>
+        </div>
+      </div>
+
+      <!-- YOUR BRAND: Image -->
+      <div class="sec" id="sec-bottom" data-target="bottom">
+        <div class="sec-title">Your Brand &#8212; Image</div>
+        <div class="dz" id="dz-bottom">
+          <div class="dz-ph" id="ph-bottom">
+            <div class="dz-icon" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 28 28" fill="none"><rect x="2" y="5" width="24" height="18" rx="3" stroke="#b8d4b8" stroke-width="1.6"/><path d="M2 18l7-7 5 5 4-4 8 7" stroke="#b8d4b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="19" cy="11" r="2.5" stroke="#b8d4b8" stroke-width="1.4"/></svg></div>
+            <div><b>Drop image here</b><span>Drag, paste or upload</span></div>
+            <div class="dz-hint">Bottom-right card</div>
+          </div>
+          <img class="dz-thumb" id="thumb-bottom" style="display:none" alt="Your brand image preview"/>
+        </div>
+        <div class="dz-row">
+          <button class="dz-btn" onclick="triggerUpload('bottom')" aria-label="Upload bottom image"><svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true"><path d="M7 1v8M3 5l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="13" x2="13" y2="13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Upload</button>
+          <button class="dz-btn" onclick="pasteTarget('bottom')" aria-label="Paste image for bottom slot"><svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true"><rect x="4" y="1" width="6" height="3" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M3 3h8a1 1 0 011 1v7a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.4"/></svg> Paste</button>
+          <button class="dz-btn" id="crop-bottom-btn" style="display:none" onclick="openCrop('bottom')" aria-label="Crop bottom image"><svg viewBox="0 0 14 14" width="11" height="11" fill="none" aria-hidden="true"><path d="M1 4V1h3M10 1h3v3M13 10v3h-3M4 13H1v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Crop</button>
+          <button class="dz-btn del" id="del-bottom" onclick="removeImage('bottom')" aria-label="Remove bottom image"><svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true"><path d="M2 3.5h10M5 3.5V2h4v1.5M4.5 3.5l.5 8h4l.5-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Remove</button>
+        </div>
+        <div class="img-adjust" id="adj-bottom">
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Zoom</span><input type="range" class="adj-slider" id="zoom-bottom" min="50" max="300" value="100" aria-label="Bottom image zoom" oninput="applyImgStyle('bottom')"/><span class="adj-val" id="zoom-bottom-val">100%</span></div>
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">X</span><input type="range" class="adj-slider" id="posx-bottom" min="0" max="100" value="50" aria-label="Bottom image horizontal position" oninput="applyImgStyle('bottom')"/><span class="adj-val" id="posx-bottom-val">50%</span></div>
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Y</span><input type="range" class="adj-slider" id="posy-bottom" min="0" max="100" value="50" aria-label="Bottom image vertical position" oninput="applyImgStyle('bottom')"/><span class="adj-val" id="posy-bottom-val">50%</span></div>
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Bright</span><input type="range" class="adj-slider" id="bright-bottom" min="50" max="150" value="100" aria-label="Bottom card brightness" oninput="applyFilter('bottom')"/><span class="adj-val" id="bright-bottom-val">100%</span></div>
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Contrast</span><input type="range" class="adj-slider" id="contrast-bottom" min="50" max="150" value="100" aria-label="Bottom card contrast" oninput="applyFilter('bottom')"/><span class="adj-val" id="contrast-bottom-val">100%</span></div>
+          <div class="adj-footer"><button class="adj-reset" onclick="resetImgStyle('bottom');resetFilter('bottom')">Reset</button></div>
+        </div>
+        <input type="file" id="file-bottom" accept="image/*" style="display:none" aria-label="Choose bottom image" onchange="onFileChange(this,'bottom')"/>
+      </div>
+
+      <!-- YOUR BRAND: Labels -->
+      <div class="sec">
+        <div class="sec-title">Your Brand &#8212; Labels</div>
+        <div class="fields">
+          <div class="fr"><div class="fr-head"><label class="fl" for="in-bot-eye">Eyebrow</label><input type="color" class="lbl-swatch" id="lc-bot-eye" value="#b0a898" aria-label="Bottom eyebrow text color" oninput="applyLabelColor('c-bot-eye',this.value)"/></div><input class="fi" id="in-bot-eye" type="text" value="Same Vibe &middot; Fraction of the Price" oninput="sync('in-bot-eye','c-bot-eye')"/></div>
+          <div class="fr"><div class="fr-head"><label class="fl" for="in-bot-brand">Brand Name</label><input type="color" class="lbl-swatch" id="lc-bot-brand" value="#1a1814" aria-label="Bottom brand name text color" oninput="applyLabelColor('c-bot-brand',this.value)"/></div><textarea class="fi" id="in-bot-brand" oninput="sync('in-bot-brand','c-bot-brand')">Your
+Brand</textarea></div>
+          <div class="fr"><label class="fl" for="fs-bot-brand">Brand Name Size</label><div class="adj-row" style="margin-top:2px;"><input type="range" class="adj-slider" id="fs-bot-brand" min="28" max="80" value="42" aria-label="Bottom brand name font size" oninput="applyFontSize('bot-brand')"/><span class="adj-val" id="fs-bot-brand-val">42px</span></div></div>
+          <div class="fr"><div class="fr-head"><label class="fl" for="in-bot-price">Price</label><input type="color" class="lbl-swatch" id="lc-bot-price" value="#2a6640" aria-label="Bottom price text color" oninput="applyLabelColor('c-bot-price',this.value)"/></div><input class="fi" id="in-bot-price" type="text" value="&#8377;399 only" oninput="sync('in-bot-price','c-bot-price')"/></div>
+          <div class="fr"><div class="fr-head"><label class="fl" for="in-bot-tag">Tagline</label><input type="color" class="lbl-swatch" id="lc-bot-tag" value="#aaa098" aria-label="Bottom tagline text color" oninput="applyLabelColor('c-bot-tag',this.value)"/></div><input class="fi" id="in-bot-tag" type="text" value="Affordable &middot; Looks just as good" oninput="sync('in-bot-tag','c-bot-tag')"/></div>
+        </div>
+      </div>
+
+      <!-- SWIRL -->
+      <div class="sec">
+        <div class="sec-title">Swirl Arrow</div>
+        <div class="swirl-toggle-row">
+          <label class="tog-switch" aria-label="Show swirl arrow"><input type="checkbox" id="swirl-visible" checked aria-label="Show swirl arrow" onchange="toggleSwirl(this.checked)"/><span class="tog-track"></span></label>
+          <span class="tog-label" aria-hidden="true">Show swirl arrow</span>
+        </div>
+        <div id="swirl-controls">
+          <div class="swirl-grid">
+            <div class="si"><button type="button" class="sb active" onclick="setSwirl(0)" aria-label="Loop"><svg viewBox="0 0 120 120" fill="none"><path d="M42 18C28 4,10 12,18 28C24 40,42 38,48 28C54 18,46 8,38 12" stroke="#4a4030" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M44 30C60 50,80 70,98 100" stroke="#4a4030" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="8 5"/><path d="M86 96L98 100L92 88" stroke="#4a4030" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="sn">Loop</div></div>
+            <div class="si"><button type="button" class="sb" onclick="setSwirl(1)" aria-label="Curve"><svg viewBox="0 0 120 120" fill="none"><path d="M18 15C50 8,108 35,105 100" stroke="#4a4030" stroke-width="5.5" fill="none" stroke-linecap="round"/><path d="M93 92L105 100L108 88" stroke="#4a4030" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="sn">Curve</div></div>
+            <div class="si"><button type="button" class="sb" onclick="setSwirl(2)" aria-label="Double"><svg viewBox="0 0 120 120" fill="none"><path d="M38 20C20 10,12 28,24 34C36 40,50 30,46 16C42 5,28 7,26 18C55 50,80 78,100 105" stroke="#4a4030" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M88 98L100 105L104 92" stroke="#4a4030" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="sn">Double</div></div>
+            <div class="si"><button type="button" class="sb" onclick="setSwirl(3)" aria-label="S-Curl"><svg viewBox="0 0 120 120" fill="none"><path d="M20 20C20 50,80 55,80 85" stroke="#4a4030" stroke-width="5.5" fill="none" stroke-linecap="round"/><circle cx="20" cy="20" r="7" stroke="#4a4030" stroke-width="3.5" fill="none"/><path d="M68 80L80 85L80 72" stroke="#4a4030" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="sn">S-Curl</div></div>
+            <div class="si"><button type="button" class="sb" onclick="setSwirl(4)" aria-label="Flourish"><svg viewBox="0 0 120 120" fill="none"><path d="M30 15C14 15,8 30,20 35C32 40,44 30,42 18C40 8,28 8,26 18" stroke="#4a4030" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M38 22C58 44,80 68,100 96" stroke="#4a4030" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M88 90L100 96L96 83" stroke="#4a4030" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="sn">Flourish</div></div>
+            <div class="si"><button type="button" class="sb" onclick="setSwirl(5)" aria-label="Spiral"><svg viewBox="0 0 120 120" fill="none"><path d="M60 18C85 18,100 35,100 58C100 83,80 98,58 94C36 90,22 72,28 52C34 35,52 28,62 40C70 50,64 64,54 62" stroke="#4a4030" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M42 56L54 62L54 49" stroke="#4a4030" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="sn">Spiral</div></div>
+          </div>
+          <div id="swirl-color-row" style="margin-top:10px;">
+            <div class="color-row"><input type="color" class="color-swatch" id="swirl-color" value="#4a4030" aria-label="Swirl color" oninput="applySwirlColor(this.value)"/><span class="color-label">Swirl color</span><button type="button" class="color-reset" onclick="applySwirlColor('#4a4030');document.getElementById('swirl-color').value='#4a4030'">Reset</button></div>
+            <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Opacity</span><input type="range" class="adj-slider" id="swirl-opacity" min="10" max="100" value="85" aria-label="Swirl opacity" oninput="applySwirlOpacity(this.value)"/><span class="adj-val" id="swirl-opacity-val">85%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BACKGROUND (two-image) -->
+      <div class="sec">
+        <div class="sec-title">Background</div>
+        <div class="bg-type-row">
+          <button class="bgt-btn active" data-bgt="solid" onclick="setBgType('solid')" aria-pressed="true">Solid</button>
+          <button class="bgt-btn" data-bgt="gradient" onclick="setBgType('gradient')" aria-pressed="false">Gradient</button>
+        </div>
+        <div id="bg-solid-ctrl">
+          <div class="color-row"><input type="color" class="color-swatch" id="canvas-bg" value="#ffffff" aria-label="Canvas background solid color" oninput="bgFromSolid(this.value)"/><span class="color-label">Canvas color</span><button type="button" class="color-reset" onclick="bgFromSolid('#ffffff')">Reset</button></div>
+        </div>
+        <div id="bg-grad-ctrl" style="display:none">
+          <div class="grad-colors-row">
+            <input type="color" class="color-swatch" id="bg-gc1" value="#1a1e2e" aria-label="Gradient start color" oninput="bgState.gradC1=this.value;applyBgFromState()"/>
+            <svg viewBox="0 0 24 10" width="24" height="10" aria-hidden="true"><path d="M0 5h22M17 1l5 4-5 4" stroke="#a09890" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+            <input type="color" class="color-swatch" id="bg-gc2" value="#4a3020" aria-label="Gradient end color" oninput="bgState.gradC2=this.value;applyBgFromState()"/>
+          </div>
+          <div class="fr" style="margin-top:8px;"><label class="fl" for="bg-gdir">Direction</label><select class="fi" id="bg-gdir" aria-label="Gradient direction" onchange="bgState.gradDir=this.value;applyBgFromState()"><option value="to bottom">Top &#8594; Bottom</option><option value="to right">Left &#8594; Right</option><option value="to bottom right">Diagonal &#8600;</option><option value="to bottom left">Diagonal &#8601;</option><option value="135deg">135&#176;</option><option value="45deg">45&#176;</option></select></div>
+        </div>
+      </div>
+
+      <!-- DOWNLOAD -->
+      <div class="dl-sec">
+        <div class="export-opts" role="group" aria-label="Export quality"><button type="button" class="eopt" id="eopt-1x" onclick="setExport('1x')">1x</button><button type="button" class="eopt active" id="eopt-2x" onclick="setExport('2x')">2x Hi-Res</button><button type="button" class="eopt" id="eopt-jpg" onclick="setExport('jpg')">JPEG</button></div>
+        <button type="button" id="dl-btn" onclick="downloadPNG()"><svg viewBox="0 0 16 16" fill="none" width="13" height="13" aria-hidden="true"><path d="M8 1v8M4 6l4 3 4-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="14" x2="15" y2="14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Download</button>
+        <div class="kb-hint">Ctrl + Shift + S</div>
+      </div>
+
+    </div><!-- /panel-two -->
+
+    <!-- ====== ONE-IMAGE PANEL (predefined template) ====== -->
+    <div id="panel-one" style="display:none">
+
+      <!-- Single image -->
+      <div class="sec" id="sec-single" data-target="single">
+        <div class="sec-title">Image</div>
+        <div class="dz" id="dz-single">
+          <div class="dz-ph" id="ph-single">
+            <div class="dz-icon" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 28 28" fill="none"><rect x="2" y="5" width="24" height="18" rx="3" stroke="#b8c8e0" stroke-width="1.6"/><path d="M2 18l7-7 5 5 4-4 8 7" stroke="#b8c8e0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="19" cy="11" r="2.5" stroke="#b8c8e0" stroke-width="1.4"/></svg></div>
+            <div><b>Drop image here</b><span>Drag, paste or upload</span></div>
+          </div>
+          <img class="dz-thumb" id="thumb-single" style="display:none" alt="Single image preview"/>
+        </div>
+        <div class="dz-row">
+          <button class="dz-btn" onclick="triggerUpload('single')" aria-label="Upload image"><svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true"><path d="M7 1v8M3 5l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="13" x2="13" y2="13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Upload</button>
+          <button class="dz-btn" onclick="pasteTarget('single')" aria-label="Paste image"><svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true"><rect x="4" y="1" width="6" height="3" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M3 3h8a1 1 0 011 1v7a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.4"/></svg> Paste</button>
+          <button class="dz-btn" id="crop-single-btn" style="display:none" onclick="openCrop('single')" aria-label="Crop image"><svg viewBox="0 0 14 14" width="11" height="11" fill="none" aria-hidden="true"><path d="M1 4V1h3M10 1h3v3M13 10v3h-3M4 13H1v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Crop</button>
+          <button class="dz-btn del" id="del-single" onclick="removeImage('single')" aria-label="Remove image"><svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true"><path d="M2 3.5h10M5 3.5V2h4v1.5M4.5 3.5l.5 8h4l.5-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Remove</button>
+        </div>
+        <div class="img-adjust" id="adj-single">
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Zoom</span><input type="range" class="adj-slider" id="zoom-single" min="50" max="300" value="100" aria-label="Image zoom" oninput="applyImgStyle('single')"/><span class="adj-val" id="zoom-single-val">100%</span></div>
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">X</span><input type="range" class="adj-slider" id="posx-single" min="0" max="100" value="50" aria-label="Image horizontal position" oninput="applyImgStyle('single')"/><span class="adj-val" id="posx-single-val">50%</span></div>
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Y</span><input type="range" class="adj-slider" id="posy-single" min="0" max="100" value="50" aria-label="Image vertical position" oninput="applyImgStyle('single')"/><span class="adj-val" id="posy-single-val">50%</span></div>
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Bright</span><input type="range" class="adj-slider" id="bright-single" min="50" max="150" value="100" aria-label="Brightness" oninput="applyFilter('single')"/><span class="adj-val" id="bright-single-val">100%</span></div>
+          <div class="adj-row"><span class="adj-lbl" aria-hidden="true">Contrast</span><input type="range" class="adj-slider" id="contrast-single" min="50" max="150" value="100" aria-label="Contrast" oninput="applyFilter('single')"/><span class="adj-val" id="contrast-single-val">100%</span></div>
+          <div class="adj-footer"><button class="adj-reset" onclick="resetImgStyle('single');resetFilter('single')">Reset</button></div>
+        </div>
+        <input type="file" id="file-single" accept="image/*" style="display:none" aria-label="Choose image" onchange="onFileChange(this,'single')"/>
+      </div>
+
+      <!-- Single template labels -->
+      <div class="sec">
+        <div class="sec-title">Labels</div>
+        <div class="fields">
+          <div class="fr"><div class="fr-head"><label class="fl" for="s-in-eye">Eyebrow</label><input type="color" class="lbl-swatch" id="s-lc-eye" value="#a09890" aria-label="Single eyebrow color" oninput="applySingleColor('s-eye',this.value)"/></div><input class="fi" id="s-in-eye" type="text" value="Your Brand" oninput="sync('s-in-eye','s-eye')"/></div>
+          <div class="fr"><div class="fr-head"><label class="fl" for="s-in-brand">Brand Name</label><input type="color" class="lbl-swatch" id="s-lc-brand" value="#1a1814" aria-label="Single brand name color" oninput="applySingleColor('s-brand',this.value)"/></div><textarea class="fi" id="s-in-brand" oninput="sync('s-in-brand','s-brand')">Brand Name</textarea></div>
+          <div class="fr"><label class="fl" for="s-fs-brand">Brand Name Size</label><div class="adj-row" style="margin-top:2px;"><input type="range" class="adj-slider" id="s-fs-brand" min="28" max="100" value="72" aria-label="Single brand font size" oninput="applyFontSize('s-brand')"/><span class="adj-val" id="s-fs-brand-val">72px</span></div></div>
+          <div class="fr"><div class="fr-head"><label class="fl" for="s-in-model">Model</label><input type="color" class="lbl-swatch" id="s-lc-model" value="#7a7060" aria-label="Single model color" oninput="applySingleColor('s-model',this.value)"/></div><input class="fi" id="s-in-model" type="text" value="Model Name" oninput="sync('s-in-model','s-model')"/></div>
+          <div class="fr"><div class="fr-head"><label class="fl" for="s-in-price">Price</label><input type="color" class="lbl-swatch" id="s-lc-price" value="#5a5248" aria-label="Single price color" oninput="applySingleColor('s-price',this.value)"/></div><input class="fi" id="s-in-price" type="text" value="&#8377;00,000" oninput="sync('s-in-price','s-price')"/></div>
+        </div>
+      </div>
+
+      <!-- Single label alignment -->
+      <div class="sec">
+        <div class="sec-title">Label Alignment</div>
+        <div class="sal-row" role="group" aria-label="Label text alignment">
+          <button class="sal-btn active" data-align="left" onclick="applySingleAlign('left')" aria-label="Align labels left">&#8676; Left</button>
+          <button class="sal-btn" data-align="center" onclick="applySingleAlign('center')" aria-label="Align labels center">&#8677; Center</button>
+          <button class="sal-btn" data-align="right" onclick="applySingleAlign('right')" aria-label="Align labels right">Right &#8677;</button>
+        </div>
+      </div>
+
+      <!-- Background (one-image) -->
+      <div class="sec">
+        <div class="sec-title">Background</div>
+        <div class="bg-type-row">
+          <button class="bgt-btn active" data-bgt="solid" onclick="setBgType('solid')" aria-pressed="true">Solid</button>
+          <button class="bgt-btn" data-bgt="gradient" onclick="setBgType('gradient')" aria-pressed="false">Gradient</button>
+        </div>
+        <div id="bg-solid-ctrl-one">
+          <div class="color-row"><input type="color" class="color-swatch" id="canvas-bg-one" value="#ffffff" aria-label="Canvas background color" oninput="bgFromSolid(this.value)"/><span class="color-label">Canvas color</span></div>
+        </div>
+        <div id="bg-grad-ctrl-one" style="display:none">
+          <div class="grad-colors-row">
+            <input type="color" class="color-swatch" id="bg-gc1-one" value="#1a1e2e" aria-label="Gradient start color" oninput="bgState.gradC1=this.value;syncBgInputs();applyBgFromState()"/>
+            <svg viewBox="0 0 24 10" width="24" height="10" aria-hidden="true"><path d="M0 5h22M17 1l5 4-5 4" stroke="#a09890" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+            <input type="color" class="color-swatch" id="bg-gc2-one" value="#4a3020" aria-label="Gradient end color" oninput="bgState.gradC2=this.value;syncBgInputs();applyBgFromState()"/>
+          </div>
+          <div class="fr" style="margin-top:8px;"><label class="fl" for="bg-gdir-one">Direction</label><select class="fi" id="bg-gdir-one" aria-label="Gradient direction" onchange="bgState.gradDir=this.value;syncBgInputs();applyBgFromState()"><option value="to bottom">Top &#8594; Bottom</option><option value="to right">Left &#8594; Right</option><option value="to bottom right">Diagonal &#8600;</option><option value="to bottom left">Diagonal &#8601;</option><option value="135deg">135&#176;</option><option value="45deg">45&#176;</option></select></div>
+        </div>
+      </div>
+
+      <!-- Download (one-image) -->
+      <div class="dl-sec">
+        <div class="export-opts" role="group" aria-label="Export quality"><button type="button" class="eopt" id="eopt-1x-one" onclick="setExport('1x')">1x</button><button type="button" class="eopt active" id="eopt-2x-one" onclick="setExport('2x')">2x Hi-Res</button><button type="button" class="eopt" id="eopt-jpg-one" onclick="setExport('jpg')">JPEG</button></div>
+        <button type="button" id="dl-btn" onclick="downloadPNG()"><svg viewBox="0 0 16 16" fill="none" width="13" height="13" aria-hidden="true"><path d="M8 1v8M4 6l4 3 4-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="14" x2="15" y2="14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Download</button>
+        <div class="kb-hint">Ctrl + Shift + S</div>
+      </div>
+
+    </div><!-- /panel-one -->
+
+    <!-- ====== CUSTOM PANEL (free canvas) ====== -->
+    <div id="panel-custom" style="display:none">
+
+      <!-- Quick-add buttons -->
+      <div class="sec">
+        <div class="sec-title">Canvas Layers</div>
+        <div class="layer-quick-btns">
+          <button type="button" class="lqb-btn lqb-img" onclick="triggerCustomImage()">
+            <svg viewBox="0 0 16 16" fill="none" width="13" height="13" aria-hidden="true"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M1 10l4-4 3 3 2-2 5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+            Upload
+          </button>
+          <button type="button" class="lqb-btn lqb-paste" onclick="pasteCustomImg()">
+            <svg viewBox="0 0 16 16" fill="none" width="13" height="13" aria-hidden="true"><rect x="5" y="1" width="6" height="3" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M4 3H3a1 1 0 00-1 1v9a1 1 0 001 1h10a1 1 0 001-1V4a1 1 0 00-1-1h-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M6 9l2 2 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Paste
+          </button>
+          <button type="button" class="lqb-btn lqb-txt" onclick="addTextLayer()">
+            <svg viewBox="0 0 16 16" fill="none" width="13" height="13" aria-hidden="true"><line x1="2" y1="4" x2="14" y2="4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="8" y1="4" x2="8" y2="13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            Text
+          </button>
+        </div>
+        <div id="layers-list"></div>
+        <p class="layer-hint">Drag layers on canvas to reposition</p>
+      </div>
+
+      <!-- Background (custom) -->
+      <div class="sec">
+        <div class="sec-title">Background</div>
+        <div class="bg-type-row">
+          <button class="bgt-btn active" data-bgt="solid" onclick="setBgType('solid')" aria-pressed="true">Solid</button>
+          <button class="bgt-btn" data-bgt="gradient" onclick="setBgType('gradient')" aria-pressed="false">Gradient</button>
+        </div>
+        <div id="bg-solid-ctrl-custom">
+          <div class="color-row"><input type="color" class="color-swatch" id="canvas-bg-custom" value="#ffffff" aria-label="Custom canvas background color" oninput="bgFromSolid(this.value)"/><span class="color-label">Canvas color</span></div>
+        </div>
+        <div id="bg-grad-ctrl-custom" style="display:none">
+          <div class="grad-colors-row">
+            <input type="color" class="color-swatch" id="bg-gc1-custom" value="#1a1e2e" aria-label="Gradient start color" oninput="bgState.gradC1=this.value;syncBgInputs();applyBgFromState()"/>
+            <svg viewBox="0 0 24 10" width="24" height="10" aria-hidden="true"><path d="M0 5h22M17 1l5 4-5 4" stroke="#a09890" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+            <input type="color" class="color-swatch" id="bg-gc2-custom" value="#4a3020" aria-label="Gradient end color" oninput="bgState.gradC2=this.value;syncBgInputs();applyBgFromState()"/>
+          </div>
+          <div class="fr" style="margin-top:8px;"><label class="fl" for="bg-gdir-custom">Direction</label><select class="fi" id="bg-gdir-custom" aria-label="Gradient direction" onchange="bgState.gradDir=this.value;syncBgInputs();applyBgFromState()"><option value="to bottom">Top &#8594; Bottom</option><option value="to right">Left &#8594; Right</option><option value="to bottom right">Diagonal &#8600;</option><option value="to bottom left">Diagonal &#8601;</option><option value="135deg">135&#176;</option><option value="45deg">45&#176;</option></select></div>
+        </div>
+      </div>
+
+      <!-- Download (custom) -->
+      <div class="dl-sec">
+        <div class="export-opts" role="group" aria-label="Export quality"><button type="button" class="eopt" id="eopt-1x-custom" onclick="setExport('1x')">1x</button><button type="button" class="eopt active" id="eopt-2x-custom" onclick="setExport('2x')">2x Hi-Res</button><button type="button" class="eopt" id="eopt-jpg-custom" onclick="setExport('jpg')">JPEG</button></div>
+        <button type="button" id="dl-btn" onclick="downloadPNG()"><svg viewBox="0 0 16 16" fill="none" width="13" height="13" aria-hidden="true"><path d="M8 1v8M4 6l4 3 4-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="14" x2="15" y2="14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Download</button>
+        <div class="kb-hint">Ctrl + Shift + S</div>
+      </div>
+
+      <input type="file" id="file-custom-img" accept="image/*" style="display:none" aria-label="Add image layer" onchange="onCustomImageChange(this)"/>
+    </div><!-- /panel-custom -->
+
+  </aside>
+
+  <!-- ============ RIGHT: CANVAS ============ -->
+  <div id="canvas-wrapper">
+    <div id="canvas-scaler">
+      <div id="pin-canvas">
+
+        <!-- TWO-IMAGE LAYOUT -->
+        <div id="layout-two">
+          <div class="card" id="card-top">
+            <div class="cph" id="cph-top"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" aria-hidden="true"><rect width="72" height="72" rx="14" fill="#ece8e2"/><path d="M12 50l14-18 11 13 7-9 14 14H12z" fill="#d8d0c6"/><circle cx="50" cy="24" r="7" fill="#d8d0c6"/></svg><p>Top Brand<br/>Image</p></div>
+          </div>
+          <div class="label-top">
+            <div class="txt-eye" id="c-top-eye">The Original</div>
+            <div class="txt-brand" id="c-top-brand">Patek
+Philippe</div>
+            <div class="txt-div"></div>
+            <div class="txt-model" id="c-top-model">Nautilus 5811</div>
+            <div class="txt-price" id="c-top-price">&#8377;1,20,00,000+</div>
+          </div>
+          <svg id="swirl-svg" class="swirl" viewBox="0 0 120 120" width="150" height="150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M 42 18 C 28 4, 10 12, 18 28 C 24 40, 42 38, 48 28 C 54 18, 46 8, 38 12" stroke="#4a4030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M 44 30 C 60 50, 80 70, 98 100" stroke="#4a4030" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="6 4"/>
+            <path d="M 86 96 L 98 100 L 92 88" stroke="#4a4030" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="label-bottom">
+            <div class="txt-eye" id="c-bot-eye">Same Vibe &middot; Fraction of the Price</div>
+            <div class="txt-brand" id="c-bot-brand">Your
+Brand</div>
+            <div class="txt-div"></div>
+            <div class="txt-dupe" id="c-bot-price">&#8377;399 only</div>
+            <div class="txt-tag" id="c-bot-tag">Affordable &middot; Looks just as good</div>
+          </div>
+          <div class="card" id="card-bottom">
+            <div class="cph" id="cph-bottom"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" aria-hidden="true"><rect width="72" height="72" rx="14" fill="#dce8d8"/><path d="M12 50l14-18 11 13 7-9 14 14H12z" fill="#c0d4bc"/><circle cx="50" cy="24" r="7" fill="#c0d4bc"/></svg><p>Your Brand<br/>Image</p></div>
+          </div>
+        </div><!-- /layout-two -->
+
+        <!-- ONE-IMAGE TEMPLATE LAYOUT -->
+        <div id="layout-single" style="display:none">
+          <div id="card-single" class="card">
+            <div class="cph" id="cph-single"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" aria-hidden="true"><rect width="72" height="72" rx="14" fill="#dde5f0"/><path d="M12 50l14-18 11 13 7-9 14 14H12z" fill="#b8c8e0"/><circle cx="50" cy="24" r="7" fill="#b8c8e0"/></svg><p>Drop an Image<br/>to fill the card</p></div>
+          </div>
+          <div id="single-labels">
+            <div class="s-txt-eye" id="s-eye">Your Brand</div>
+            <div class="s-txt-brand" id="s-brand">Brand Name</div>
+            <div class="s-txt-div"></div>
+            <div class="s-txt-model" id="s-model">Model Name</div>
+            <div class="s-txt-price" id="s-price">&#8377;00,000</div>
+          </div>
+        </div><!-- /layout-single -->
+
+        <!-- CUSTOM LAYOUT (free canvas) -->
+        <div id="layout-custom" style="display:none"></div>
+
+      </div><!-- /pin-canvas -->
+    </div><!-- /canvas-scaler -->
+
+    <!-- Floating toolbar (custom mode text layers) -->
+    <div id="float-tb" role="toolbar" aria-label="Text formatting">
+      <button class="ftb-btn" id="ftb-bold" title="Bold" aria-label="Bold" onclick="toggleLayerStyle('bold')"><b>B</b></button>
+      <button class="ftb-btn" id="ftb-italic" title="Italic" aria-label="Italic" onclick="toggleLayerStyle('italic')"><i>I</i></button>
+      <div class="ftb-sep" role="separator"></div>
+      <button class="ftb-btn" id="ftb-al" title="Align left" aria-label="Align left" onclick="setLayerAlign('left')"><svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true"><line x1="0" y1="2" x2="14" y2="2" stroke="currentColor" stroke-width="1.5"/><line x1="0" y1="6" x2="9" y2="6" stroke="currentColor" stroke-width="1.5"/><line x1="0" y1="10" x2="11" y2="10" stroke="currentColor" stroke-width="1.5"/></svg></button>
+      <button class="ftb-btn" id="ftb-ac" title="Align center" aria-label="Align center" onclick="setLayerAlign('center')"><svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true"><line x1="0" y1="2" x2="14" y2="2" stroke="currentColor" stroke-width="1.5"/><line x1="2.5" y1="6" x2="11.5" y2="6" stroke="currentColor" stroke-width="1.5"/><line x1="1" y1="10" x2="13" y2="10" stroke="currentColor" stroke-width="1.5"/></svg></button>
+      <button class="ftb-btn" id="ftb-ar" title="Align right" aria-label="Align right" onclick="setLayerAlign('right')"><svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true"><line x1="0" y1="2" x2="14" y2="2" stroke="currentColor" stroke-width="1.5"/><line x1="5" y1="6" x2="14" y2="6" stroke="currentColor" stroke-width="1.5"/><line x1="3" y1="10" x2="14" y2="10" stroke="currentColor" stroke-width="1.5"/></svg></button>
+      <div class="ftb-sep" role="separator"></div>
+      <button class="ftb-btn ftb-del" title="Delete layer" aria-label="Delete layer" onclick="removeSelectedLayer()"><svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true"><path d="M2 3.5h10M5 3.5V2h4v1.5M4.5 3.5l.5 8h4l.5-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+
+    <div id="scale-tip">Preview (scaled) &middot; Edit in panel</div>
+  </div><!-- /canvas-wrapper -->
+
+</div><!-- /app -->
+
+<!-- Mobile Tab Bar -->
+<nav id="mob-tabbar" aria-label="View mode">
+  <button class="mob-tab active" id="tab-edit" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button>
+  <button class="mob-tab" id="tab-preview" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Preview</button>
+</nav>
+
+<!-- Crop Modal -->
+<div id="crop-modal" role="dialog" aria-modal="true" aria-label="Crop image">
+  <div id="crop-backdrop" onclick="closeCrop()"></div>
+  <div id="crop-container">
+    <div id="crop-header"><span id="crop-title">Crop Image</span><div id="crop-actions"><button class="cbtn cbtn-sec" onclick="resetCrop()">Reset</button><button class="cbtn cbtn-pri" onclick="applyCrop()">&#10003; Apply</button><button class="cbtn cbtn-cls" onclick="closeCrop()" aria-label="Close">&#10005;</button></div></div>
+    <div id="crop-area"><div id="crop-img-wrap"><img id="crop-img" alt="Image to crop"/><canvas id="crop-canvas" aria-label="Crop selection area"></canvas></div></div>
+    <div id="crop-footer">Drag to select &middot; Double-click to apply &middot; Esc to cancel</div>
+  </div>
+</div>
+
+<div id="loading-ov" role="status" aria-live="polite"><div class="spin" aria-hidden="true"></div><p>Generating PNG&#8230;</p></div>
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<script src="src/app.js"></script>
+</body>
+</html>
