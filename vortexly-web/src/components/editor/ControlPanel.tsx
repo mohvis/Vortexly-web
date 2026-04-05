@@ -13,15 +13,6 @@ const CONNECTOR_THUMBS = [
   { label: 'Spiral',   d: 'M60 18C85 18,100 35,100 58C100 83,80 98,58 94C36 90,22 72,28 52C34 35,52 28,62 40C70 50,64 64,54 62M42 56L54 62L54 49' },
 ];
 
-const GRAD_DIRS = [
-  { value: 'to bottom',       label: 'Top → Bottom' },
-  { value: 'to right',        label: 'Left → Right' },
-  { value: 'to bottom right', label: 'Diagonal ↘' },
-  { value: 'to bottom left',  label: 'Diagonal ↙' },
-  { value: '135deg',          label: '135°' },
-  { value: '45deg',           label: '45°' },
-];
-
 const FONT_OPTS = [
   'Bodoni Moda','Playfair Display','Cormorant Garamond','Lora',
   'Libre Baskerville','EB Garamond','Merriweather','Georgia',
@@ -204,92 +195,6 @@ function LabelField({ label, inputId, value, color, fontSize, minFs, maxFs, mult
   );
 }
 
-// ── Background section ────────────────────────────────────────────
-function BgSection({ state, store, suffix }: { state: EditorState; store: EditorStore; suffix: string }) {
-  const { bg } = state;
-  return (
-    <AccordionSec title="Background" id={`sec-bg${suffix}`} defaultOpen={false}>
-      <div className="bg-type-row">
-        {(['solid','gradient'] as const).map(t => (
-          <button key={t} type="button" className={`bgt-btn${bg.type === t ? ' active' : ''}`}
-            aria-pressed={bg.type === t}
-            onClick={() => store.setBg({ type: t })}>
-            {t === 'solid' ? 'Solid' : 'Gradient'}
-          </button>
-        ))}
-      </div>
-      {bg.type === 'solid' ? (
-        <div className="color-row">
-          <input type="color" className="color-swatch" value={bg.solid} aria-label="Canvas background color"
-            onChange={e => store.setBg({ solid: e.target.value })} />
-          <span className="color-label">Canvas color</span>
-          <button type="button" className="color-reset" onClick={() => store.setBg({ solid: '#ffffff' })}>Reset</button>
-        </div>
-      ) : (
-        <>
-          <div className="grad-colors-row">
-            <input type="color" className="color-swatch" value={bg.gradC1} aria-label="Gradient start color"
-              onChange={e => store.setBg({ gradC1: e.target.value })} />
-            <svg viewBox="0 0 24 10" width="24" height="10" aria-hidden="true">
-              <path d="M0 5h22M17 1l5 4-5 4" stroke="#a09890" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            </svg>
-            <input type="color" className="color-swatch" value={bg.gradC2} aria-label="Gradient end color"
-              onChange={e => store.setBg({ gradC2: e.target.value })} />
-          </div>
-          <div className="fr fr--mt8">
-            <label className="fl" htmlFor={`bg-gdir${suffix}`}>Direction</label>
-            <select className="fi" id={`bg-gdir${suffix}`} value={bg.gradDir}
-              onChange={e => store.setBg({ gradDir: e.target.value })}>
-              {GRAD_DIRS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
-            </select>
-          </div>
-        </>
-      )}
-    </AccordionSec>
-  );
-}
-
-// ── Export / Download section ─────────────────────────────────────
-function DownloadSection({ state, store, onDownload, onSaveToDrive }: {
-  state: EditorState; store: EditorStore; onDownload: () => void; onSaveToDrive: () => void;
-}) {
-  return (
-    <div className="dl-sec">
-      <div className="export-opts" role="group" aria-label="Export quality">
-        {(['1x','2x','jpg'] as const).map(m => (
-          <button key={m} type="button"
-            className={`eopt${state.exportMode === m ? ' active' : ''}`}
-            onClick={() => store.setExportMode(m)}>
-            {m === '2x' ? '2× Hi-Res' : m.toUpperCase()}
-          </button>
-        ))}
-      </div>
-      <button id="dl-btn" type="button" onClick={onDownload}>
-        <svg viewBox="0 0 16 16" fill="none" width="13" height="13" aria-hidden="true">
-          <path d="M8 1v8M4 6l4 3 4-3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
-          <line x1="1" y1="14" x2="15" y2="14" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
-        </svg>
-        Download
-      </button>
-      {store.isAuth && store.driveConnected ? (
-        <button id="drive-save-btn" type="button" onClick={onSaveToDrive}>
-          <svg viewBox="0 0 22 16" fill="none" width="15" height="15" aria-hidden="true">
-            <path d="M8 14H2a1 1 0 0 1-.87-1.5L7 3l3 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M14 14h6a1 1 0 0 0 .87-1.5L15 3l-3 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M8 14h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
-          Save to Drive
-        </button>
-      ) : store.isAuth ? (
-        <a href="/login" className="drive-badge drive-badge--off">Connect Google Drive</a>
-      ) : (
-        <a href="/login" className="drive-badge drive-badge--guest">Sign in to sync to Drive</a>
-      )}
-      <div className="kb-hint">Ctrl + Shift + S → Download</div>
-    </div>
-  );
-}
-
 // ── Custom canvas layer list ──────────────────────────────────────
 function LayerList({ state, store, onOpenCropLayer }: {
   state: EditorState; store: EditorStore; onOpenCropLayer: (id: string) => void;
@@ -416,15 +321,13 @@ function LayerList({ state, store, onOpenCropLayer }: {
 interface ControlPanelProps {
   state:           EditorState;
   store:           EditorStore;
-  onDownload:      () => void;
-  onSaveToDrive:   () => void;
   onOpenCrop:      (target: ImageTarget) => void;
   onOpenCropLayer: (id: string) => void;
   mobileActive?:   boolean;
 }
 
 export function ControlPanel({
-  state, store, onDownload, onSaveToDrive, onOpenCrop, onOpenCropLayer, mobileActive
+  state, store, onOpenCrop, onOpenCropLayer, mobileActive
 }: ControlPanelProps) {
   const fileCustomRef = useRef<HTMLInputElement>(null);
   const { twoLabels: tl, oneLabels: ol } = state;
@@ -552,8 +455,6 @@ export function ControlPanel({
           )}
         </AccordionSec>
 
-        <BgSection state={state} store={store} suffix="" />
-        <DownloadSection state={state} store={store} onDownload={onDownload} onSaveToDrive={onSaveToDrive} />
       </div>
 
       {/* ══════════════ SINGLE PANEL ══════════════ */}
@@ -578,8 +479,6 @@ export function ControlPanel({
           </div>
         </AccordionSec>
 
-        <BgSection state={state} store={store} suffix="-one" />
-        <DownloadSection state={state} store={store} onDownload={onDownload} onSaveToDrive={onSaveToDrive} />
       </div>
 
       {/* ══════════════ FREE CANVAS PANEL ══════════════ */}
@@ -603,9 +502,6 @@ export function ControlPanel({
           <LayerList state={state} store={store} onOpenCropLayer={onOpenCropLayer} />
           <p className="layer-hint">Drag · resize · reorder on canvas</p>
         </AccordionSec>
-
-        <BgSection state={state} store={store} suffix="-custom" />
-        <DownloadSection state={state} store={store} onDownload={onDownload} onSaveToDrive={onSaveToDrive} />
 
         <input ref={fileCustomRef} type="file" accept="image/*" className="file-input-hidden"
           onChange={e => { const f = e.target.files?.[0]; if (f) handleCustomImageFile(f); e.target.value = ''; }} />

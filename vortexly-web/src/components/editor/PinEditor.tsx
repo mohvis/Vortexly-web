@@ -5,6 +5,7 @@ import React, {
 import { renderPinToCanvas } from '@/lib/exportCanvas';
 import { useEditorState }  from '@/hooks/useEditorState';
 import { ControlPanel }    from '@/components/editor/ControlPanel';
+import { RightPanel }      from '@/components/editor/RightPanel';
 import { PinCanvas }       from '@/components/editor/PinCanvas';
 import { CropModal }       from '@/components/editor/CropModal';
 import { createClient }    from '@/lib/supabase/client';
@@ -29,7 +30,7 @@ export function PinEditor() {
   const pinCanvasRef = useRef<HTMLDivElement>(null);
 
   // Mobile tabs
-  const [mobileTab, setMobileTab] = useState<'edit' | 'preview'>('edit');
+  const [mobileTab, setMobileTab] = useState<'edit' | 'preview' | 'export'>('edit');
 
   // Compute scale on mount + resize (RAF-guarded to avoid CPU spike during drag)
   useEffect(() => {
@@ -230,8 +231,7 @@ export function PinEditor() {
       <ControlPanel
         state={state}
         store={store}
-        onDownload={downloadPNG}
-        onSaveToDrive={saveToDrive}
+
         onOpenCrop={openCrop}
         onOpenCropLayer={openCropLayer}
         mobileActive={mobileTab === 'edit'}
@@ -308,7 +308,17 @@ export function PinEditor() {
         </div>
       </div>
 
-      {/* ── Mobile tabs ─────── */}
+      {/* ── Right panel ──── */}
+      <RightPanel
+        state={state}
+        store={store}
+        onDownload={downloadPNG}
+        onSaveToDrive={saveToDrive}
+        onOpenCropLayer={openCropLayer}
+        mobileActive={mobileTab === 'export'}
+      />
+
+      {/* ── Mobile tabs ───── */}
       <nav id="mob-tabbar" aria-label="View mode">
         <button className={`mob-tab${mobileTab === 'edit' ? ' active' : ''}`} onClick={() => setMobileTab('edit')}
           aria-pressed={mobileTab === 'edit'}>
@@ -319,6 +329,11 @@ export function PinEditor() {
           aria-pressed={mobileTab === 'preview'}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           Preview
+        </button>
+        <button className={`mob-tab${mobileTab === 'export' ? ' active' : ''}`} onClick={() => setMobileTab('export')}
+          aria-pressed={mobileTab === 'export'}>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v10M8 9l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+          Export
         </button>
       </nav>
 

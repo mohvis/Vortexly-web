@@ -660,3 +660,95 @@ label.fl{display:block;}
 [data-theme="dark"] .color-reset:hover{color:#c0b8a8;}
 [data-theme="dark"] .kb-hint{color:#4a4440;}
 [data-theme="dark"] #scale-tip{color:#4a4440;}
+
+/* ════════════════════════════════════════
+   RIGHT PANEL
+   ════════════════════════════════════════ */
+#right-panel{
+  width:240px;min-width:240px;height:100%;flex-shrink:0;
+  display:flex;flex-direction:column;
+  border-left:1px solid #e6e0d8;background:#faf9f7;overflow:hidden;
+}
+
+/* Scrollable properties area */
+.rp-body{flex:1;overflow-y:auto;overflow-x:hidden;}
+.rp-body::-webkit-scrollbar{width:4px;}
+.rp-body::-webkit-scrollbar-thumb{background:#d4ccc4;border-radius:2px;}
+
+/* Section blocks */
+.rp-sec{padding:13px 14px 12px;border-bottom:1px solid #ece6de;}
+.rp-sec--highlight{background:#f5f2ec;}
+.rp-sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.rp-sec-title{
+  font-size:9px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;
+  color:#a09888;margin-bottom:10px;
+}
+.rp-sec-head .rp-sec-title{margin-bottom:0;}
+
+/* Deselect button */
+.rp-desel{
+  display:flex;align-items:center;justify-content:center;
+  width:22px;height:22px;border:none;background:none;
+  cursor:pointer;color:#b0a898;border-radius:4px;transition:all 0.15s;
+}
+.rp-desel:hover{color:#1a1814;background:#ece6de;}
+
+/* Canvas info chips */
+.rp-canvas-info{display:flex;gap:5px;flex-wrap:wrap;}
+.rp-info-chip{
+  font-size:9.5px;letter-spacing:0.5px;color:#8a8278;
+  background:#eee9e2;border-radius:4px;padding:3px 7px;
+}
+.rp-info-mode{background:#e8f0f4;color:#3a6080;}
+
+/* Layer action row */
+.rp-layer-actions{margin-top:8px;}
+
+/* Alignment row inside right panel */
+.rp-align-row{margin-top:8px;}
+
+/* Export block — pinned at bottom, reuses dl-sec styles */
+.rp-export{
+  padding:13px 14px 16px;border-top:1px solid #e6e0d8;
+  background:#faf9f7;flex-shrink:0;
+}
+.rp-export .rp-sec-title{margin-bottom:10px;}
+
+/* Drive badge (sign-in / connect prompts inside export) */
+.drive-badge{
+  display:block;text-align:center;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;
+  border:1.5px solid #d4ccc4;border-radius:7px;padding:9px 10px;text-decoration:none;
+  background:#fff;color:#6a6058;margin-top:6px;transition:all 0.15s;
+}
+.drive-badge:hover{border-color:#7a6a50;background:#f4efe8;}
+.drive-badge--off{border-color:#fbbf24;color:#92400e;background:#fffbeb;}
+.drive-badge--off:hover{background:#fef3c7;}
+.drive-badge--guest{border-color:#c4b5a0;color:#5a4838;}
+
+/* ── Dark theme: right panel ── */
+[data-theme="dark"] #right-panel{background:#1a1814;border-color:#2e2a24;}
+[data-theme="dark"] .rp-body::-webkit-scrollbar-thumb{background:#302c28;}
+[data-theme="dark"] .rp-sec{border-color:#2e2a24;}
+[data-theme="dark"] .rp-sec--highlight{background:#201d1a;}
+[data-theme="dark"] .rp-sec-title{color:#5a5248;}
+[data-theme="dark"] .rp-desel{color:#5a5248;}
+[data-theme="dark"] .rp-desel:hover{color:#c0b8a8;background:#252118;}
+[data-theme="dark"] .rp-info-chip{background:#252118;color:#7a7060;}
+[data-theme="dark"] .rp-info-mode{background:#1a2030;color:#6090b0;}
+[data-theme="dark"] .rp-export{background:#1a1814;border-color:#2e2a24;}
+[data-theme="dark"] .drive-badge{background:#252118;border-color:#302c28;color:#9a9080;}
+[data-theme="dark"] .drive-badge:hover{background:#302c28;border-color:#504030;}
+[data-theme="dark"] .drive-badge--off{border-color:#78350f;color:#fbbf24;background:#1c1004;}
+[data-theme="dark"] .drive-badge--guest{border-color:#3a3028;color:#8a8070;}
+
+/* ── Mobile: hide right panel except on Export tab ── */
+@media (max-width: 767px) {
+  #right-panel{
+    display:none;
+    width:100%;min-width:unset;height:auto;
+    border-left:none;border-top:1px solid #e6e0d8;
+    flex-direction:column;overflow-y:auto;
+  }
+  #right-panel.mob-active{display:flex;}
+  #right-panel.mob-active .rp-export{padding-bottom:72px;}
+}
