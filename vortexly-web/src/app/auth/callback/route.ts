@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { cookies } from "next/headers";
-import { createClient } from "@/lib/supabase/server";
+import { createServerClient } from "@supabase/ssr";
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
@@ -10,7 +9,25 @@ export async function GET(request: NextRequest) {
   const type       = requestUrl.searchParams.get("type") as "signup" | "recovery" | "email" | null;
   const next       = requestUrl.searchParams.get("next") ?? "/editor";
 
-  const supabase = await createClient();
+  // Capture cookies as Supabase sets them so we can apply them to the redirect
+  const pendingCookies: Array<{ name: string; value: string; options: Record<string, unknown> }> = [];
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            pendingCookies.push({ name, value, options }),
+          );
+        },
+      },
+    },
+  );
 
   // ── Email confirmation / magic-link (token_hash flow) ────────
   if (tokenHash && type) {
@@ -18,7 +35,9 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(error.message)}`, request.url));
     }
-    return NextResponse.redirect(new URL(next, request.url));
+    const res = NextResponse.redirect(new URL(next, request.url));
+    pendingCookies.forEach(({ name, value, options }) => res.cookies.set(name, value, options as Parameters<typeof res.cookies.set>[2]));
+    return res;
   }
 
   // ── OAuth / PKCE code exchange (Google, etc.) ────────────────
@@ -45,19 +64,11 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Build redirect and forward all Supabase session cookies onto it
+  // Build redirect and apply all captured session cookies onto it
   const redirectResponse = NextResponse.redirect(new URL(next, request.url));
-  const cookieStore = await cookies();
-  cookieStore.getAll().forEach(({ name, value }) => {
-    if (name.startsWith("sb-")) {
-      redirectResponse.cookies.set(name, value, {
-        path:     "/",
-        sameSite: "lax",
-        httpOnly: true,
-        secure:   true,
-      });
-    }
-  });
+  pendingCookies.forEach(({ name, value, options }) =>
+    redirectResponse.cookies.set(name, value, options as Parameters<typeof redirectResponse.cookies.set>[2]),
+  );
 
   return redirectResponse;
 }
