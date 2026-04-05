@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
@@ -44,5 +45,19 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(new URL(next, request.url));
+  // Build redirect and forward all Supabase session cookies onto it
+  const redirectResponse = NextResponse.redirect(new URL(next, request.url));
+  const cookieStore = await cookies();
+  cookieStore.getAll().forEach(({ name, value }) => {
+    if (name.startsWith("sb-")) {
+      redirectResponse.cookies.set(name, value, {
+        path:     "/",
+        sameSite: "lax",
+        httpOnly: true,
+        secure:   true,
+      });
+    }
+  });
+
+  return redirectResponse;
 }
