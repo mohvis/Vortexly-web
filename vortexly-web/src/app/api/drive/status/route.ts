@@ -6,10 +6,10 @@ import { createClient } from "@/lib/supabase/server";
 export async function GET() {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
 
-    // Only treat as unauthenticated if getUser itself failed
-    if (userError || !user) {
+    if (!user) {
       return NextResponse.json({ connected: false, authenticated: false });
     }
 
