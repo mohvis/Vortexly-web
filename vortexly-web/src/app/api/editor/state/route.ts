@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 // ── GET  /api/editor/state  ─ load saved state for current user ──
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
+    const token = req.headers.get('authorization')?.replace('Bearer ', '') ?? '';
+    const { data: { user } } = await supabase.auth.getUser(token || undefined);
     if (!user) return NextResponse.json({ state: null }, { status: 200 });
 
     const { data, error } = await supabase
@@ -29,8 +29,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
+    const token = req.headers.get('authorization')?.replace('Bearer ', '') ?? '';
+    const { data: { user } } = await supabase.auth.getUser(token || undefined);
     if (!user) return NextResponse.json({ error: 'Unauthenticated' }, { status: 401 });
 
     const body = await req.json();

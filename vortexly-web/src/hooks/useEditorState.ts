@@ -46,7 +46,11 @@ function loadFromStorage(): EditorState {
 // ── Cloud helpers ─────────────────────────────────────────────────
 async function loadFromCloud(): Promise<EditorState | null> {
   try {
-    const res = await fetch('/api/editor/state');
+    const { data: { session } } = await createClient().auth.getSession();
+    const token = session?.access_token;
+    const res = await fetch('/api/editor/state', {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
     if (!res.ok) return null;
     const json = await res.json();
     if (!json.state) return null;
@@ -71,9 +75,14 @@ async function loadFromCloud(): Promise<EditorState | null> {
 
 async function saveToCloud(s: EditorState): Promise<void> {
   try {
+    const { data: { session } } = await createClient().auth.getSession();
+    const token = session?.access_token;
     await fetch('/api/editor/state', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify(s),
     });
   } catch { /* network error — silently skip */ }
@@ -148,7 +157,10 @@ export function useEditorState() {
         if (session?.provider_token) {
           const saved = await fetch('/api/drive/save-token', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              ...(session.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+            },
             body: JSON.stringify({
               access_token:  session.provider_token,
               refresh_token: session.provider_refresh_token ?? null,

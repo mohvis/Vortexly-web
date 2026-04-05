@@ -7,7 +7,8 @@ import { createClient } from "@/lib/supabase/server";
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const token = req.headers.get('authorization')?.replace('Bearer ', '') ?? '';
+    const { data: { user } } = await supabase.auth.getUser(token || undefined);
     if (!user) return NextResponse.json({ error: "Unauthenticated" }, { status: 401 });
 
     const { access_token, refresh_token } = await req.json() as {

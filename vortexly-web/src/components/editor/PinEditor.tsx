@@ -7,6 +7,7 @@ import { useEditorState }  from '@/hooks/useEditorState';
 import { ControlPanel }    from '@/components/editor/ControlPanel';
 import { PinCanvas }       from '@/components/editor/PinCanvas';
 import { CropModal }       from '@/components/editor/CropModal';
+import { createClient }    from '@/lib/supabase/client';
 import type { ImageTarget, Layer } from '@/types/editor';
 
 // ── Crop queue state ─────────────────────────────────────────────
@@ -174,10 +175,16 @@ export function PinEditor() {
       const result = await renderBlob();
       if (!result) { store.showToast('Export failed'); return; }
       const { blob, fileName } = result;
+      const { data: { session } } = await createClient().auth.getSession();
+      const token = session?.access_token;
       const form = new FormData();
       form.append('file', blob, fileName);
       form.append('filename', fileName);
-      const res = await fetch('/api/drive/upload', { method: 'POST', body: form });
+      const res = await fetch('/api/drive/upload', {
+        method: 'POST',
+        body: form,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
       if (res.ok) {
         store.showToast('Saved to Drive ✓');
       } else {
