@@ -139,7 +139,8 @@ export async function POST(req: NextRequest) {
       fileName:    driveFile.name,
     });
   } catch (err) {
-    console.error("[/api/drive/upload]", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[/api/drive/upload]", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
