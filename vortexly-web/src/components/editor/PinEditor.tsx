@@ -22,7 +22,9 @@ export function PinEditor() {
   const { state } = store;
 
   // ── Canvas scale ─────────────────────────────────────────────
-  const [scale,      setScale]     = useState(0.5);
+  const [fitScale,    setFitScale]    = useState(0.5);
+  const [zoomFactor,  setZoomFactor]  = useState(1);
+  const scale      = fitScale * zoomFactor;
   const wrapperRef   = useRef<HTMLDivElement>(null);
   const pinCanvasRef = useRef<HTMLDivElement>(null);
 
@@ -38,8 +40,8 @@ export function PinEditor() {
         const el = wrapperRef.current;
         if (!el) return;
         const avW = Math.max(1, el.clientWidth  - 40);
-        const avH = Math.max(1, el.clientHeight - 40);
-        setScale(Math.min(1, Math.max(0.28, Math.min(avW / 1000, avH / 1500))));
+        const avH = Math.max(1, el.clientHeight - 40 - 38); // 38 = canvas toolbar height
+        setFitScale(Math.min(1, Math.max(0.28, Math.min(avW / 1000, avH / 1500))));
       });
     }
     update();
@@ -102,7 +104,12 @@ export function PinEditor() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.selectedLayerId, state.layoutMode]);
 
-  // ── Crop modal ────────────────────────────────────────────────
+  // ── Zoom controls ─────────────────────────────────────────────
+  const zoomIn  = useCallback(() => setZoomFactor(f => Math.min(3,   +(f * 1.25).toFixed(4))), []);
+  const zoomOut = useCallback(() => setZoomFactor(f => Math.max(0.3, +(f / 1.25).toFixed(4))), []);
+  const zoomFit = useCallback(() => setZoomFactor(1), []);
+
+  // ── Crop modal ─────────────────────────────────────────────────
   const [cropQueue, setCropQueue] = useState<CropTarget | null>(null);
 
   const openCrop = useCallback((target: ImageTarget) => {
@@ -233,34 +240,72 @@ export function PinEditor() {
       {/* ── Canvas area ─────── */}
       <div id="canvas-wrapper" ref={wrapperRef}
         className={mobileTab === 'preview' ? 'mob-active' : ''}>
-        <PinCanvas
-          ref={pinCanvasRef}
-          state={state}
-          scale={scale}
-          onSelectLayer={store.selectLayer}
-          onUpdateLayer={store.updateLayer}
-          onOpenCrop={openCrop}
-        />
 
-        {/* Float toolbar */}
-        {selLayer && (
-          <div id="float-tb" role="toolbar" aria-label="Text formatting" style={floatTbStyle()}>
-            <button className={`ftb-btn${selLayer.fontWeight === '700' ? ' ftb-active' : ''}`} title="Bold"
-              onClick={() => store.updateLayer(selLayer.id, { fontWeight: selLayer.fontWeight === '700' ? '400' : '700' })}><b>B</b></button>
-            <button className={`ftb-btn${selLayer.fontStyle === 'italic' ? ' ftb-active' : ''}`} title="Italic"
-              onClick={() => store.updateLayer(selLayer.id, { fontStyle: selLayer.fontStyle === 'italic' ? 'normal' : 'italic' })}><i>I</i></button>
-            <div className="ftb-sep" role="separator"/>
-            {(['left','center','right'] as const).map(a => (
-              <button key={a} className={`ftb-btn${selLayer.align === a ? ' ftb-active' : ''}`} title={`Align ${a}`}
-                onClick={() => store.updateLayer(selLayer.id, { align: a })}>{a[0].toUpperCase()}</button>
-            ))}
-            <div className="ftb-sep" role="separator"/>
-            <button className="ftb-btn ftb-del" title="Delete layer"
-              onClick={() => store.removeLayer(selLayer.id)}>🗑</button>
+        {/* Canvas toolbar */}
+        <div className="canvas-tb">
+          <div className="canvas-tb-left">
+            <button type="button" className="ctb-btn" title={state.darkTheme ? 'Light mode' : 'Dark mode'}
+              onClick={() => store.toggleDarkTheme()}>
+              {state.darkTheme ? (
+                <svg viewBox="0 0 20 20" width="14" height="14" fill="none" aria-hidden="true">
+                  <circle cx="10" cy="10" r="4" stroke="currentColor" strokeWidth="1.5"/>
+                  <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+              ) : (
+                <svg viewBox="0 0 20 20" width="14" height="14" fill="none" aria-hidden="true">
+                  <path d="M17 11.5A7 7 0 0 1 8.5 3a7.5 7.5 0 1 0 8.5 8.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                </svg>
+              )}
+              <span>{state.darkTheme ? 'Light' : 'Dark'}</span>
+            </button>
           </div>
-        )}
+          <div className="canvas-tb-center">
+            <span className="ctb-info">1000 × 1500 px</span>
+          </div>
+          <div className="canvas-tb-right">
+            <button type="button" className="ctb-btn ctb-zoom-btn" onClick={zoomOut} title="Zoom out" aria-label="Zoom out">−</button>
+            <button type="button" className="ctb-zoom-display" onClick={zoomFit} title="Reset zoom">
+              {Math.round(fitScale * zoomFactor * 100)}%
+            </button>
+            <button type="button" className="ctb-btn ctb-zoom-btn" onClick={zoomIn} title="Zoom in" aria-label="Zoom in">+</button>
+            <button type="button" className="ctb-btn ctb-fit-btn" onClick={zoomFit} title="Fit to screen" aria-label="Fit to screen">
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden="true">
+                <path d="M1 6V1h5M10 1h5v5M15 10v5h-5M6 15H1v-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
 
-        <div id="scale-tip">Preview (scaled) · Edit in panel</div>
+        <div className="canvas-scroll-area">
+          <PinCanvas
+            ref={pinCanvasRef}
+            state={state}
+            scale={scale}
+            onSelectLayer={store.selectLayer}
+            onUpdateLayer={store.updateLayer}
+            onOpenCrop={openCrop}
+          />
+
+          {/* Float toolbar */}
+          {selLayer && (
+            <div id="float-tb" role="toolbar" aria-label="Text formatting" style={floatTbStyle()}>
+              <button className={`ftb-btn${selLayer.fontWeight === '700' ? ' ftb-active' : ''}`} title="Bold"
+                onClick={() => store.updateLayer(selLayer.id, { fontWeight: selLayer.fontWeight === '700' ? '400' : '700' })}><b>B</b></button>
+              <button className={`ftb-btn${selLayer.fontStyle === 'italic' ? ' ftb-active' : ''}`} title="Italic"
+                onClick={() => store.updateLayer(selLayer.id, { fontStyle: selLayer.fontStyle === 'italic' ? 'normal' : 'italic' })}><i>I</i></button>
+              <div className="ftb-sep" role="separator"/>
+              {(['left','center','right'] as const).map(a => (
+                <button key={a} className={`ftb-btn${selLayer.align === a ? ' ftb-active' : ''}`} title={`Align ${a}`}
+                  onClick={() => store.updateLayer(selLayer.id, { align: a })}>{a[0].toUpperCase()}</button>
+              ))}
+              <div className="ftb-sep" role="separator"/>
+              <button className="ftb-btn ftb-del" title="Delete layer"
+                onClick={() => store.removeLayer(selLayer.id)}>✕</button>
+            </div>
+          )}
+
+          <div id="scale-tip">{Math.round(fitScale * zoomFactor * 100)}% · 1000 × 1500 px canvas</div>
+        </div>
       </div>
 
       {/* ── Mobile tabs ─────── */}

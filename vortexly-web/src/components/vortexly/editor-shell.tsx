@@ -1,14 +1,15 @@
 import type { User } from "@supabase/supabase-js";
 import { PinEditor } from "@/components/editor/PinEditor";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
+import { UserMenu } from "@/components/vortexly/UserMenu";
 
 type EditorShellProps = {
   user: User | null;
 };
 
 export async function EditorShell({ user }: EditorShellProps) {
-  // Check Drive connection status server-side to avoid a client-side waterfall
   let driveConnected = false;
   if (user) {
     const supabase = await createClient();
@@ -22,35 +23,32 @@ export async function EditorShell({ user }: EditorShellProps) {
 
   return (
     <>
-      <div className="shell-topbar">
-        <div className="user-pill">
+      {/* ── Top header bar ── */}
+      <header className="app-header">
+        <div className="app-header-brand">
+          <div className="app-header-logo">
+            <Image src="/logo.png" alt="" width={22} height={22} priority />
+          </div>
+          <span className="app-header-name">Vortexly</span>
+          <span className="app-header-sep" aria-hidden="true" />
+          <span className="app-header-product">PinEditor</span>
+        </div>
+
+        <div className="app-header-right">
           {user ? (
-            <>
-              {driveConnected ? (
-                <span className="drive-status drive-status--on" title="Google Drive sync active">
-                  <svg viewBox="0 0 20 14" fill="none" width="16" height="12" aria-hidden="true">
-                    <path d="M1 7L4.5 1h11L19 7l-4.5 7h-9L1 7z" stroke="currentColor" strokeWidth="1.4" fill="none"/>
-                    <path d="M7 7l2.5 2.5L13 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-              ) : (
-                <Link href="/login" className="drive-status drive-status--off" title="Connect Google Drive">
-                  <svg viewBox="0 0 20 14" fill="none" width="16" height="12" aria-hidden="true">
-                    <path d="M1 7L4.5 1h11L19 7l-4.5 7h-9L1 7z" stroke="currentColor" strokeWidth="1.4" fill="none"/>
-                    <path d="M10 4v3M10 9.5v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                </Link>
-              )}
-              <span>{user.email}</span>
-              <Link href="/logout" className="icon-link" aria-label="Sign out">↩</Link>
-            </>
+            <UserMenu email={user.email ?? ""} driveConnected={driveConnected} />
           ) : (
-            <Link href="/login" className="ghost-btn sign-in-pill">
-              Sign in to sync
+            <Link href="/login" className="app-header-signin">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+                <path d="M10 3h3a1 1 0 011 1v8a1 1 0 01-1 1h-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                <path d="M7 11l3-3-3-3M10 8H2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Sign in
             </Link>
           )}
         </div>
-      </div>
+      </header>
+
       <PinEditor />
     </>
   );
