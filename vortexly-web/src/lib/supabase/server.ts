@@ -12,15 +12,10 @@ export async function createClient() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
-            );
-          } catch {
-            // Called from a Server Component — safe to ignore.
-            // Middleware is responsible for refreshing sessions.
-          }
+        setAll() {
+          // No-op: the browser Supabase client manages all cookie writes.
+          // Allowing server-side writes causes Supabase to clear cookies
+          // when token refresh network calls fail in serverless environments.
         },
       },
     },
