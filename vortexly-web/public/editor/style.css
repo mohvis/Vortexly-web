@@ -335,7 +335,7 @@ textarea.fi{min-height:48px;line-height:1.4;}
   }
   #editor-panel.mob-active{display:flex;}
 
-  /* ── Canvas wrapper: fills available space when preview tab active ── */
+  /* ── Canvas wrapper: fills screen on canvas tab ── */
   #canvas-wrapper{
     flex:none;
     width:100%;
@@ -347,6 +347,16 @@ textarea.fi{min-height:48px;line-height:1.4;}
   #canvas-wrapper.mob-active .canvas-scroll-area{
     flex:1;display:flex;align-items:center;justify-content:center;
   }
+
+  /* Right panel: stacks below editor-panel on edit tab */
+  #right-panel{
+    display:none;
+    width:100%;min-width:unset;height:auto;
+    border-left:none;border-top:1px solid #e6e0d8;
+    flex-direction:column;overflow-y:visible;
+  }
+  #right-panel.mob-active{display:flex;}
+  #right-panel.mob-active .rp-export{padding-bottom:72px;}
 
   /* ── Mobile tab bar ── */
   #mob-tabbar{

@@ -30,7 +30,12 @@ export function PinEditor() {
   const pinCanvasRef = useRef<HTMLDivElement>(null);
 
   // Mobile tabs
-  const [mobileTab, setMobileTab] = useState<'edit' | 'preview' | 'export'>('edit');
+  const [mobileTab, setMobileTab] = useState<'edit' | 'canvas'>('edit');
+
+  // Canvas pan (used when zoomFactor > 1)
+  const [pan,      setPan]      = useState({ x: 0, y: 0 });
+  const [panning,  setPanning]  = useState(false);
+  const panDrag = useRef<{ mx: number; my: number; px: number; py: number } | null>(null);
 
   // Compute scale on mount + resize (RAF-guarded to avoid CPU spike during drag)
   useEffect(() => {
@@ -108,7 +113,10 @@ export function PinEditor() {
   // ── Zoom controls ─────────────────────────────────────────────
   const zoomIn  = useCallback(() => setZoomFactor(f => Math.min(3,   +(f * 1.25).toFixed(4))), []);
   const zoomOut = useCallback(() => setZoomFactor(f => Math.max(0.3, +(f / 1.25).toFixed(4))), []);
-  const zoomFit = useCallback(() => setZoomFactor(1), []);
+  const zoomFit = useCallback(() => { setZoomFactor(1); setPan({ x: 0, y: 0 }); }, []);
+
+  // Auto-reset pan when zoom returns to fit
+  useEffect(() => { if (zoomFactor <= 1) setPan({ x: 0, y: 0 }); }, [zoomFactor]);
 
   // ── Crop modal ─────────────────────────────────────────────────
   const [cropQueue, setCropQueue] = useState<CropTarget | null>(null);
@@ -223,6 +231,27 @@ export function PinEditor() {
     };
   }
 
+  // ── Canvas pan handlers (active when zoomFactor > 1) ─────────
+  function onScrollAreaPointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    if (zoomFactor <= 1) return;
+    const target = e.target as HTMLElement;
+    if (target.closest('.txt-layer,.img-layer,button,input,select,textarea,a')) return;
+    panDrag.current = { mx: e.clientX, my: e.clientY, px: pan.x, py: pan.y };
+    setPanning(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }
+  function onScrollAreaPointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (!panDrag.current) return;
+    setPan({
+      x: panDrag.current.px + (e.clientX - panDrag.current.mx),
+      y: panDrag.current.py + (e.clientY - panDrag.current.my),
+    });
+  }
+  function onScrollAreaPointerUp() {
+    panDrag.current = null;
+    setPanning(false);
+  }
+
   const selLayer = state.layers.find(l => l.id === state.selectedLayerId) as import('@/types/editor').TextLayer | undefined;
 
   return (
@@ -239,7 +268,7 @@ export function PinEditor() {
 
       {/* ── Canvas area ─────── */}
       <div id="canvas-wrapper" ref={wrapperRef}
-        className={mobileTab === 'preview' ? 'mob-active' : ''}>
+        className={mobileTab === 'canvas' ? 'mob-active' : ''}>
 
         {/* Canvas toolbar */}
         <div className="canvas-tb">
@@ -276,7 +305,15 @@ export function PinEditor() {
           </div>
         </div>
 
-        <div className="canvas-scroll-area">
+        <div className="canvas-scroll-area"
+          style={zoomFactor > 1 ? { cursor: panning ? 'grabbing' : 'grab' } : undefined}
+          onPointerDown={onScrollAreaPointerDown}
+          onPointerMove={onScrollAreaPointerMove}
+          onPointerUp={onScrollAreaPointerUp}
+          onPointerCancel={onScrollAreaPointerUp}
+        >
+          {/* Pan translate wrapper */}
+          <div style={{ transform: `translate(${pan.x}px,${pan.y}px)`, flexShrink: 0, position: 'relative', willChange: 'transform' }}>
           <PinCanvas
             ref={pinCanvasRef}
             state={state}
@@ -303,6 +340,7 @@ export function PinEditor() {
                 onClick={() => store.removeLayer(selLayer.id)}>✕</button>
             </div>
           )}
+          </div>{/* end pan wrapper */}
 
           <div id="scale-tip">{Math.round(fitScale * zoomFactor * 100)}% · 1000 × 1500 px canvas</div>
         </div>
@@ -315,7 +353,7 @@ export function PinEditor() {
         onDownload={downloadPNG}
         onSaveToDrive={saveToDrive}
         onOpenCropLayer={openCropLayer}
-        mobileActive={mobileTab === 'export'}
+        mobileActive={mobileTab === 'edit'}
       />
 
       {/* ── Mobile tabs ───── */}
@@ -325,15 +363,10 @@ export function PinEditor() {
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           Edit
         </button>
-        <button className={`mob-tab${mobileTab === 'preview' ? ' active' : ''}`} onClick={() => { setMobileTab('preview'); }}
-          aria-pressed={mobileTab === 'preview'}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          Preview
-        </button>
-        <button className={`mob-tab${mobileTab === 'export' ? ' active' : ''}`} onClick={() => setMobileTab('export')}
-          aria-pressed={mobileTab === 'export'}>
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v10M8 9l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
-          Export
+        <button className={`mob-tab${mobileTab === 'canvas' ? ' active' : ''}`} onClick={() => setMobileTab('canvas')}
+          aria-pressed={mobileTab === 'canvas'}>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.8"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="M3 15l5-5 4 4 3-3 6 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          Canvas
         </button>
       </nav>
 
