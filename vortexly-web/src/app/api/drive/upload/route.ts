@@ -10,8 +10,7 @@ export async function POST(req: NextRequest) {
   try {
     // ── 1. Authenticate ──────────────────────────────────────────
     const supabase = await createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthenticated" }, { status: 401 });
     }
