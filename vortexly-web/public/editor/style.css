@@ -90,15 +90,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:#e8e3dc;font-family:
 .dz-ph span{font-size:10px;color:#a09890;line-height:1.4;}
 .dz-hint{font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:#c0b8b0;margin-top:3px;}
 .dz-thumb{width:100%;height:108px;object-fit:cover;display:block;pointer-events:none;}
-.dz-row{display:flex;gap:6px;}
+.dz-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
 .dz-btn{
-  flex:1;font-family:inherit;font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;
-  border:1px solid #d4ccc4;background:#fff;color:#6a6058;border-radius:5px;
-  padding:6px 6px;cursor:pointer;transition:all 0.15s;
+  flex:1 1 calc(50% - 3px);min-width:0;
+  font-family:inherit;font-size:9.5px;letter-spacing:0.6px;text-transform:uppercase;
+  border:1.5px solid #d8d0c8;background:#f8f5f1;color:#6a6058;border-radius:7px;
+  padding:6px 8px;cursor:pointer;transition:all 0.15s;
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
 }
-.dz-btn:hover{background:#f0ece4;border-color:#b0a898;}
-.dz-btn.del{color:#b03830;border-color:#f0c0b0;background:#fff8f6;}
-.dz-btn.del:hover{background:#fce8e0;}
+.dz-btn:hover{background:#f0ebe4;border-color:#a09078;color:#3a3028;}
+.dz-btn.del{color:#b05050;border-color:#e8c4c4;background:#fef8f8;}
+.dz-btn.del:hover{background:#fceaea;border-color:#c07070;}
 
 /* Fields */
 .fields{display:flex;flex-direction:column;gap:7px;}
@@ -535,10 +537,6 @@ textarea.fi-layer{min-height:38px;}
 label.fl{display:block;}
 
 /* ========== CONSISTENT DZ BUTTON ICON SIZE ========== */
-.dz-btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;font-family:inherit;font-size:9.5px;letter-spacing:0.6px;text-transform:uppercase;color:#6a6058;background:#f8f5f1;border:1.5px solid #d8d0c8;border-radius:7px;padding:6px 9px;cursor:pointer;transition:all 0.15s;}
-.dz-btn:hover{background:#f0ebe4;border-color:#a09078;color:#3a3028;}
-.dz-btn.del{color:#b05050;border-color:#e8c4c4;background:#fef8f8;}
-.dz-btn.del:hover{background:#fceaea;border-color:#c07070;}
 .dz-btn svg{flex-shrink:0;}
 
 /* ========== PASTE IMG BUTTON (custom panel) ========== */

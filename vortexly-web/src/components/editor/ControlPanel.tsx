@@ -128,7 +128,7 @@ function ImageSection({ target, title, state, store, onOpenCrop }: ImageSectionP
         </button>
         {slot.src && (
           <button type="button" className="dz-btn" onClick={() => onOpenCrop(target)}>
-            <svg viewBox="0 0 14 14" fill="none" width="12" height="12" aria-hidden="true"><path d="M2 1v9h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M5 4H1M13 10H5V2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+            <svg viewBox="0 0 14 14" fill="none" width="12" height="12" aria-hidden="true"><path d="M1 5V2h3M10 2h3v3M13 9v3h-3M4 13H1v-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             Crop
           </button>
         )}
@@ -224,7 +224,7 @@ function LayerList({ state, store, onOpenCropLayer }: {
                 <div className="layer-editor">
                   <div className="lr-img-actions">
                     <button type="button" className="dz-btn" onClick={() => onOpenCropLayer(il.id)}>
-                      <svg viewBox="0 0 14 14" fill="none" width="12" height="12" aria-hidden="true"><path d="M2 1v9h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M5 4H1M13 10H5V2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                      <svg viewBox="0 0 14 14" fill="none" width="12" height="12" aria-hidden="true"><path d="M1 5V2h3M10 2h3v3M13 9v3h-3M4 13H1v-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                       Crop
                     </button>
                     <button type="button" className="dz-btn del" onClick={() => store.removeLayer(il.id)}>
