@@ -3,11 +3,11 @@
 
 /* ── APP SHELL ── */
 html,body{width:100%;height:100%;overflow:hidden;background:#e8e3dc;font-family:'DM Sans',sans-serif;}
-#app{display:flex;width:100vw;height:100vh;overflow:hidden;}
+#app{display:flex;width:100vw;height:100dvh;overflow:hidden;}
 
 /* ── EDITOR PANEL ── */
 #editor-panel{
-  width:320px;min-width:320px;height:100vh;
+  width:320px;min-width:320px;height:100dvh;
   background:#faf9f7;border-right:1px solid #e6e0d8;
   overflow-y:auto;display:flex;flex-direction:column;z-index:10;
 }
@@ -61,7 +61,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#e8e3dc;font-family:
   padding:6px 6px;cursor:pointer;transition:all 0.15s;
 }
 .dz-btn:hover{background:#f0ece4;border-color:#b0a898;}
-.dz-btn.del{color:#b03830;border-color:#f0c0b0;background:#fff8f6;display:none;}
+.dz-btn.del{color:#b03830;border-color:#f0c0b0;background:#fff8f6;}
 .dz-btn.del:hover{background:#fce8e0;}
 
 /* Fields */
@@ -131,10 +131,10 @@ textarea.fi{min-height:48px;line-height:1.4;}
 
 /* Canvas typography */
 .txt-eye{font-family:'DM Sans',sans-serif;font-weight:400;font-size:10.5px;letter-spacing:3.5px;text-transform:uppercase;color:#b0a898;margin-bottom:10px;}
-.txt-brand{font-family:'Bodoni Moda',Georgia,serif;font-weight:700;font-size:50px;line-height:1;color:#1a1814;margin-bottom:6px;letter-spacing:-0.5px;white-space:pre-line;word-break:break-word;overflow:hidden;}
+.txt-brand{font-family:'Bodoni Moda',Georgia,serif;font-weight:700;font-size:50px;line-height:1;color:#1a1814;margin-bottom:6px;letter-spacing:-0.5px;white-space:pre-line;word-break:break-word;}
 .txt-model{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:400;font-size:17px;color:#7a7060;margin-bottom:14px;letter-spacing:0.2px;}
 .txt-price{font-family:'DM Sans',sans-serif;font-weight:500;font-size:15px;color:#5a5248;letter-spacing:0.5px;}
-.txt-dupe{font-family:'Bodoni Moda',Georgia,serif;font-weight:600;font-style:italic;font-size:42px;color:#2a6640;line-height:1;margin-bottom:6px;letter-spacing:-0.3px;word-break:break-word;overflow:hidden;}
+.txt-dupe{font-family:'Bodoni Moda',Georgia,serif;font-weight:600;font-style:italic;font-size:42px;color:#2a6640;line-height:1;margin-bottom:6px;letter-spacing:-0.3px;word-break:break-word;}
 .txt-tag{font-family:'DM Sans',sans-serif;font-weight:300;font-size:11px;letter-spacing:2.8px;text-transform:uppercase;color:#aaa098;}
 .txt-div{width:40px;height:1px;background:#c8bfb0;margin:12px 0;}
 .label-bottom .txt-div{margin:12px 0 12px auto;}
@@ -212,7 +212,7 @@ textarea.fi{min-height:48px;line-height:1.4;}
 .cbtn-cls:hover{color:#fff;}
 #crop-area{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:18px;background:#0e0c0a;overflow:hidden;}
 #crop-img-wrap{position:relative;display:inline-block;line-height:0;box-shadow:0 4px 24px rgba(0,0,0,0.5);}
-#crop-img{display:block;max-width:calc(92vw - 36px);max-height:calc(94vh - 120px);object-fit:contain;pointer-events:none;user-select:none;}
+#crop-img{display:block;max-width:calc(92vw - 36px);max-height:calc(94vh - 120px);object-fit:contain;pointer-events:none;-webkit-user-select:none;user-select:none;}
 #crop-canvas{position:absolute;top:0;left:0;cursor:crosshair;}
 #crop-footer{padding:9px 16px;border-top:1px solid #333028;text-align:center;font-size:8.5px;letter-spacing:1.8px;text-transform:uppercase;color:#4a4844;}
 
@@ -333,7 +333,7 @@ textarea.fi{min-height:48px;line-height:1.4;}
 /* ----------------------------------------
    TEXT LAYERS (canvas)
    ---------------------------------------- */
-.txt-layer{position:absolute;cursor:move;user-select:none;word-break:break-word;line-height:1.25;z-index:20;touch-action:none;}
+.txt-layer{position:absolute;cursor:move;-webkit-user-select:none;user-select:none;word-break:break-word;line-height:1.25;z-index:20;touch-action:none;}
 .txt-layer.tl-selected{outline:2px dashed rgba(192,152,48,0.75);outline-offset:6px;}
 .txt-layer.tl-dragging{outline:2px solid #c09830;outline-offset:4px;}
 
@@ -354,7 +354,7 @@ textarea.fi{min-height:48px;line-height:1.4;}
 #layers-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
 .layer-row{border:1.5px solid #e0d8d0;border-radius:8px;background:#fff;overflow:hidden;transition:border-color 0.15s;}
 .layer-row.lr-selected{border-color:#c09830;}
-.layer-row-head{display:flex;align-items:center;gap:8px;padding:9px 10px;cursor:pointer;user-select:none;transition:background 0.12s;}
+.layer-row-head{display:flex;align-items:center;gap:8px;padding:9px 10px;cursor:pointer;-webkit-user-select:none;user-select:none;transition:background 0.12s;}
 .layer-row-head:hover{background:#f8f3ec;}
 .lr-chevron{font-size:9px;color:#b0a898;transition:transform 0.18s;flex-shrink:0;}
 .layer-row.lr-open .lr-chevron{transform:rotate(90deg);}
@@ -386,7 +386,7 @@ textarea.fi{min-height:48px;line-height:1.4;}
 .s-txt-price{font-family:'DM Sans',sans-serif;font-weight:500;font-size:20px;color:#5a5248;letter-spacing:0.5px;}
 
 /* ========== CUSTOM (FREE) CANVAS ========== */
-.img-layer{position:absolute;cursor:move;user-select:none;touch-action:none;background-size:cover;background-position:center;background-repeat:no-repeat;}
+.img-layer{position:absolute;cursor:move;-webkit-user-select:none;user-select:none;touch-action:none;background-size:cover;background-position:center;background-repeat:no-repeat;}
 .img-layer.tl-selected{outline:2px dashed rgba(192,152,48,0.80);outline-offset:6px;}
 .img-layer.tl-dragging{outline:2px solid #c09830;outline-offset:4px;}
 .lr-img-thumb{display:inline-block;width:28px;height:28px;border-radius:4px;background-size:cover;background-position:center;border:1px solid #e0d8d0;flex-shrink:0;}
@@ -398,6 +398,21 @@ textarea.fi{min-height:48px;line-height:1.4;}
 .lbl-swatch{width:22px;height:22px;border-radius:5px;border:1.5px solid #e0d8d0;padding:0;cursor:pointer;-webkit-appearance:none;appearance:none;flex-shrink:0;}
 .lbl-swatch::-webkit-color-swatch-wrapper{padding:1px;border-radius:4px;}
 .lbl-swatch::-webkit-color-swatch{border:none;border-radius:3px;}
+
+/* Panel visibility (replaces inline display) */
+.panel-hidden{display:none!important;}
+
+/* Gradient direction row extra top spacing */
+.fr--mt8{margin-top:8px;}
+
+/* Swirl color row extra top spacing */
+.color-row--mt{margin-top:10px;}
+
+/* Layer text textarea height */
+textarea.fi-layer{min-height:38px;}
+
+/* Hidden file inputs */
+.file-input-hidden{display:none!important;}
 
 /* ========== BACKGROUND GRADIENT ========== */
 .bg-type-row{display:flex;gap:5px;margin-bottom:10px;}
@@ -437,7 +452,7 @@ label.fl{display:block;}
    CANVA-STYLE RESIZE HANDLES
    ====================================================== */
 .txt-layer,.img-layer{overflow:visible;pointer-events:auto;}
-.cv-handle{position:absolute;width:10px;height:10px;background:#fff;border:2px solid #c09830;border-radius:50%;z-index:100;touch-action:none;user-select:none;box-shadow:0 1px 4px rgba(0,0,0,0.28);pointer-events:auto;}
+.cv-handle{position:absolute;width:10px;height:10px;background:#fff;border:2px solid #c09830;border-radius:50%;z-index:100;touch-action:none;-webkit-user-select:none;user-select:none;box-shadow:0 1px 4px rgba(0,0,0,0.28);pointer-events:auto;}
 .cv-tl{top:-5px;left:-5px;cursor:nw-resize;}
 .cv-tr{top:-5px;right:-5px;cursor:ne-resize;}
 .cv-bl{bottom:-5px;left:-5px;cursor:sw-resize;}
