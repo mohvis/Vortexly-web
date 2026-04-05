@@ -16,9 +16,13 @@ export const metadata: Metadata = {
   title: "Vortexly PinEditor",
   description: "Production workspace for creating, exporting, and syncing watch pin campaigns.",
   icons: {
-    icon: "/logo.png",
+    icon: [
+      { url: "/logo.png", type: "image/png" },
+    ],
     shortcut: "/logo.png",
-    apple: "/logo.png",
+    apple: [
+      { url: "/logo.png", type: "image/png" },
+    ],
   },
 };
 

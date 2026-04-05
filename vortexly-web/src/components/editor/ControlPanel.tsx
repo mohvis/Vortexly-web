@@ -238,7 +238,9 @@ function BgSection({ state, store, suffix }: { state: EditorState; store: Editor
   );
 }
 
-function DownloadSection({ state, store, onDownload }: { state: EditorState; store: EditorStore; onDownload: () => void }) {
+function DownloadSection({ state, store, onDownload, onSaveToDrive }: {
+  state: EditorState; store: EditorStore; onDownload: () => void; onSaveToDrive: () => void;
+}) {
   return (
     <div className="dl-sec">
       <div className="export-opts" role="group" aria-label="Export quality">
@@ -248,6 +250,8 @@ function DownloadSection({ state, store, onDownload }: { state: EditorState; sto
             onClick={() => store.setExportMode(m)}>{m === '2x' ? '2x Hi-Res' : m.toUpperCase()}</button>
         ))}
       </div>
+
+      {/* Download to device */}
       <button id="dl-btn" type="button" onClick={onDownload}>
         <svg viewBox="0 0 16 16" fill="none" width="13" height="13" aria-hidden="true">
           <path d="M8 1v8M4 6l4 3 4-3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
@@ -255,26 +259,25 @@ function DownloadSection({ state, store, onDownload }: { state: EditorState; sto
         </svg> Download
       </button>
 
-      {/* Drive sync indicator */}
-      {store.isAuth ? (
-        store.driveConnected ? (
-          <div className="drive-badge drive-badge--on" aria-label="Google Drive sync active">
-            <svg viewBox="0 0 20 20" fill="none" width="12" height="12" aria-hidden="true">
-              <path d="M3 10.5L7.5 16 17 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Saves to Google Drive
-          </div>
-        ) : (
-          <a href="/login" className="drive-badge drive-badge--off" aria-label="Connect Google Drive">
-            <svg viewBox="0 0 20 20" fill="none" width="12" height="12" aria-hidden="true">
-              <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.6"/>
-              <path d="M10 6v4l2.5 2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-            </svg>
-            Connect Drive
-          </a>
-        )
+      {/* Save to Drive — only shown when Drive is connected */}
+      {store.isAuth && store.driveConnected ? (
+        <button id="drive-save-btn" type="button" onClick={onSaveToDrive}>
+          <svg viewBox="0 0 22 16" fill="none" width="15" height="15" aria-hidden="true">
+            <path d="M8 14H2a1 1 0 0 1-.87-1.5L7 3l3 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M14 14h6a1 1 0 0 0 .87-1.5L15 3l-3 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M8 14h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg> Save to Drive
+        </button>
+      ) : store.isAuth ? (
+        <a href="/login" className="drive-badge drive-badge--off" aria-label="Connect Google Drive">
+          <svg viewBox="0 0 20 20" fill="none" width="12" height="12" aria-hidden="true">
+            <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.6"/>
+            <path d="M10 6v4l2.5 2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+          </svg>
+          Connect Drive
+        </a>
       ) : (
-        <a href="/login" className="drive-badge drive-badge--guest" aria-label="Sign in for Drive sync">
+        <a href="/login" className="drive-badge drive-badge--guest" aria-label="Sign in to save to Drive">
           <svg viewBox="0 0 20 20" fill="none" width="12" height="12" aria-hidden="true">
             <path d="M10 2.5C6.96 2.5 4.5 4.96 4.5 8c0 4.5 5.5 9.5 5.5 9.5s5.5-5 5.5-9.5c0-3.04-2.46-5.5-5.5-5.5z" stroke="currentColor" strokeWidth="1.5"/>
             <circle cx="10" cy="8" r="1.5" fill="currentColor"/>
@@ -283,7 +286,7 @@ function DownloadSection({ state, store, onDownload }: { state: EditorState; sto
         </a>
       )}
 
-      <div className="kb-hint">Ctrl + Shift + S</div>
+      <div className="kb-hint">Ctrl + Shift + S = Download</div>
     </div>
   );
 }
@@ -425,12 +428,13 @@ interface ControlPanelProps {
   state:           EditorState;
   store:           EditorStore;
   onDownload:      () => void;
+  onSaveToDrive:   () => void;
   onOpenCrop:      (target: ImageTarget) => void;
   onOpenCropLayer: (id: string) => void;
   mobileActive?:   boolean;
 }
 
-export function ControlPanel({ state, store, onDownload, onOpenCrop, onOpenCropLayer, mobileActive }: ControlPanelProps) {
+export function ControlPanel({ state, store, onDownload, onSaveToDrive, onOpenCrop, onOpenCropLayer, mobileActive }: ControlPanelProps) {
   const fileCustomRef = useRef<HTMLInputElement>(null);
 
   const handleCustomImageFile = useCallback((file: File) => {
@@ -474,17 +478,39 @@ export function ControlPanel({ state, store, onDownload, onOpenCrop, onOpenCropL
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Vortexly" width={34} height={34} />
         </div>
-        <div>
+        <div className="phdr-titles">
           <div className="phdr-title">Vortexly</div>
           <div className="phdr-sub">Watch Pin Editor</div>
         </div>
-        <button id="theme-toggle" type="button" className="theme-btn"
-          aria-pressed={state.darkTheme} aria-label="Toggle dark theme"
-          onClick={() => store.toggleDarkTheme()}>
-          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" aria-hidden="true">
-            <path d="M17 11.5A7 7 0 0 1 8.5 3a7.5 7.5 0 1 0 8.5 8.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
-          </svg>
-        </button>
+        <div className="phdr-actions">
+          {/* Quick download */}
+          <button type="button" className="phdr-btn" aria-label="Download image"
+            title="Download (Ctrl+Shift+S)" onClick={onDownload}>
+            <svg viewBox="0 0 16 16" fill="none" width="14" height="14" aria-hidden="true">
+              <path d="M8 1v8M4 6l4 3 4-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              <line x1="1" y1="14" x2="15" y2="14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+            </svg>
+          </button>
+          {/* Quick save to Drive — shown only when connected */}
+          {store.isAuth && store.driveConnected && (
+            <button type="button" className="phdr-btn phdr-btn--drive" aria-label="Save to Google Drive"
+              title="Save to Drive" onClick={onSaveToDrive}>
+              <svg viewBox="0 0 22 16" fill="none" width="14" height="14" aria-hidden="true">
+                <path d="M8 14H2a1 1 0 0 1-.87-1.5L7 3l3 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M14 14h6a1 1 0 0 0 .87-1.5L15 3l-3 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M8 14h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </button>
+          )}
+          {/* Theme toggle */}
+          <button id="theme-toggle" type="button" className="phdr-btn theme-btn"
+            aria-pressed={state.darkTheme} aria-label="Toggle dark theme"
+            onClick={() => store.toggleDarkTheme()}>
+            <svg viewBox="0 0 20 20" width="14" height="14" fill="none" aria-hidden="true">
+              <path d="M17 11.5A7 7 0 0 1 8.5 3a7.5 7.5 0 1 0 8.5 8.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* ── Mode switcher ── */}
@@ -565,7 +591,7 @@ export function ControlPanel({ state, store, onDownload, onOpenCrop, onOpenCropL
         </div>
 
         <BgSection state={state} store={store} suffix="" />
-        <DownloadSection state={state} store={store} onDownload={onDownload} />
+        <DownloadSection state={state} store={store} onDownload={onDownload} onSaveToDrive={onSaveToDrive} />
       </div>
 
       {/* ══════════════ ONE-IMAGE PANEL ══════════════ */}
@@ -597,7 +623,7 @@ export function ControlPanel({ state, store, onDownload, onOpenCrop, onOpenCropL
         </div>
 
         <BgSection state={state} store={store} suffix="-one" />
-        <DownloadSection state={state} store={store} onDownload={onDownload} />
+        <DownloadSection state={state} store={store} onDownload={onDownload} onSaveToDrive={onSaveToDrive} />
       </div>
 
       {/* ══════════════ CUSTOM PANEL ══════════════ */}
@@ -623,7 +649,7 @@ export function ControlPanel({ state, store, onDownload, onOpenCrop, onOpenCropL
         </div>
 
         <BgSection state={state} store={store} suffix="-custom" />
-        <DownloadSection state={state} store={store} onDownload={onDownload} />
+        <DownloadSection state={state} store={store} onDownload={onDownload} onSaveToDrive={onSaveToDrive} />
 
         <input ref={fileCustomRef} type="file" accept="image/*" className="file-input-hidden"
           onChange={e => { const f = e.target.files?.[0]; if (f) handleCustomImageFile(f); e.target.value = ''; }} />

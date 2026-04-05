@@ -26,8 +26,19 @@ html,body{width:100%;height:100%;overflow:hidden;background:#e8e3dc;font-family:
 }
 .phdr-logo img{width:34px;height:34px;object-fit:cover;display:block;}
 .phdr-logo svg{width:22px;height:22px;}
+.phdr-titles{flex:1;min-width:0;}
 .phdr-title{font-family:'Bodoni Moda',serif;font-size:15px;color:#1a1814;font-weight:700;line-height:1.1;}
 .phdr-sub{font-size:9.5px;color:#a09890;letter-spacing:1.5px;text-transform:uppercase;margin-top:1px;}
+.phdr-actions{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.phdr-btn{
+  width:30px;height:30px;border:1.5px solid #d4ccc4;background:transparent;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:#6a6058;transition:all 0.15s;
+}
+.phdr-btn:hover{background:#ece6de;border-color:#a09890;color:#1a1814;}
+.phdr-btn--drive{border-color:#bbf7d0;color:#166534;background:#ecfdf5;}
+.phdr-btn--drive:hover{background:#d1fae5;border-color:#86efac;}
+.theme-btn{padding:0;}
 
 /* Section wrapper */
 .sec{padding:14px 16px;border-bottom:1px solid #ece6de;}
@@ -98,6 +109,14 @@ textarea.fi{min-height:48px;line-height:1.4;}
 }
 #dl-btn:hover{background:#2e281e;}
 #dl-btn:disabled{background:#b8b0a8;cursor:not-allowed;}
+#drive-save-btn{
+  width:100%;font-family:inherit;font-size:10.5px;font-weight:500;letter-spacing:2px;
+  text-transform:uppercase;background:#166534;color:#fff;border:none;
+  padding:11px 20px;border-radius:8px;cursor:pointer;transition:background 0.18s;
+  display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;
+}
+#drive-save-btn:hover{background:#14532d;}
+#drive-save-btn:disabled{background:#b8b0a8;cursor:not-allowed;}
 .kb-hint{text-align:center;margin-top:6px;font-size:8.5px;letter-spacing:1px;text-transform:uppercase;color:#c0b8b0;}
 
 /* ── CANVAS WRAPPER ── */
@@ -515,6 +534,12 @@ label.fl{display:block;}
 [data-theme="dark"] .layer-hint,.lr-img-hint{color:#5a5248;}
 [data-theme="dark"] .dl-sec{background:#1e1b18;border-color:#2e2a24;}
 [data-theme="dark"] #dl-btn,[data-theme="dark"] #dl-btn-one,[data-theme="dark"] #dl-btn-custom{background:#c09030;border-color:#c09030;color:#fff;}
+[data-theme="dark"] #drive-save-btn{background:#15803d;color:#fff;}
+[data-theme="dark"] #drive-save-btn:hover{background:#166534;}
+[data-theme="dark"] .phdr-btn{border-color:#302c28;color:#7a7060;}
+[data-theme="dark"] .phdr-btn:hover{background:#302c28;border-color:#504030;color:#d0c8b8;}
+[data-theme="dark"] .phdr-btn--drive{border-color:#166534;color:#86efac;background:#052e16;}
+[data-theme="dark"] .phdr-btn--drive:hover{background:#14532d;}
 [data-theme="dark"] .sal-btn{background:#252118;border-color:#302c28;color:#7a7060;}
 [data-theme="dark"] .sal-btn.active{background:#c09030;border-color:#c09030;color:#fff;}
 [data-theme="dark"] .theme-btn{border-color:#302c28;color:#7a7060;}

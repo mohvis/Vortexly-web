@@ -130,69 +130,69 @@ export function PinEditor() {
   }, [cropQueue, store]);
 
   // ── Export ────────────────────────────────────────────────────
+  const renderBlob = useCallback(async (): Promise<{ blob: Blob; fileName: string } | null> => {
+    const pixelRatio = state.exportMode === '2x' ? 2 : 1;
+    const mimeType   = state.exportMode === 'jpg' ? 'image/jpeg' : 'image/png';
+    const qual       = state.exportMode === 'jpg' ? 0.92 : 1;
+    const ext        = state.exportMode === 'jpg' ? '.jpg' : '.png';
+    const fileName   = `vortexly-pin-${Date.now()}${ext}`;
+    const canvas     = await renderPinToCanvas(state, pixelRatio);
+    return new Promise(resolve => {
+      canvas.toBlob(blob => resolve(blob ? { blob, fileName } : null), mimeType, qual);
+    });
+  }, [state]);
+
   const downloadPNG = useCallback(async () => {
     store.setExporting(true);
     store.selectLayer(null);
-    // Let the loading overlay render before doing heavy work
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
     try {
-      const pixelRatio = state.exportMode === '2x' ? 2 : 1;
-      const mimeType   = state.exportMode === 'jpg' ? 'image/jpeg' : 'image/png';
-      const qual       = state.exportMode === 'jpg' ? 0.92 : 1;
-      const ext        = state.exportMode === 'jpg' ? '.jpg' : '.png';
-      const fileName   = `vortexly-pin-${Date.now()}${ext}`;
-
-      // Render via direct Canvas 2D API — pixel-perfect fonts, no DOM clipping
-      const canvas = await renderPinToCanvas(state, pixelRatio);
-
-      canvas.toBlob(async blob => {
-        if (!blob) { store.showToast('Export failed'); return; }
-
-        // ── 1. Local download (always, immediate) ──────────────────
-        const url = URL.createObjectURL(blob);
-        const a   = document.createElement('a');
-        a.href     = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 10_000);
-        store.showToast('Download started…');
-
-        // ── 2. Non-blocking Drive upload ───────────────────────────
-        if (store.isAuth && store.driveConnected) {
-          try {
-            const form = new FormData();
-            form.append('file', blob, fileName);
-            form.append('filename', fileName);
-            const res = await fetch('/api/drive/upload', { method: 'POST', body: form });
-            if (res.ok) {
-              const { driveUrl } = await res.json() as { driveUrl: string };
-              store.showToast(`Saved to Drive ✓  — ${driveUrl ? 'open in Drive' : ''}`);
-            } else {
-              const info = await res.json() as { error: string };
-              if (res.status === 403) {
-                store.clearDriveConnection();
-                store.showToast('Drive disconnected — re-sign in with Google');
-              } else store.showToast(`Drive upload failed: ${info.error}`);
-            }
-          } catch {
-            store.showToast('Drive upload failed — file saved locally');
-          }
-        } else if (store.isAuth) {
-          store.showToast('Drive not connected — re-sign in with Google');
-        } else {
-          store.showToast('Sign in with Google to also save to Drive');
-        }
-      }, mimeType, qual);
+      const result = await renderBlob();
+      if (!result) { store.showToast('Export failed'); return; }
+      const { blob, fileName } = result;
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.href = url; a.download = fileName;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+      store.showToast('Download started…');
     } catch (err) {
       console.error(err);
       store.showToast('Export failed – try again');
     } finally {
       store.setExporting(false);
     }
-  }, [state, store]);
+  }, [renderBlob, store]);
+
+  const saveToDrive = useCallback(async () => {
+    if (!store.isAuth) { store.showToast('Sign in with Google to save to Drive'); return; }
+    if (!store.driveConnected) { store.showToast('Connect Google Drive first'); return; }
+    store.setExporting(true);
+    store.selectLayer(null);
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    try {
+      const result = await renderBlob();
+      if (!result) { store.showToast('Export failed'); return; }
+      const { blob, fileName } = result;
+      const form = new FormData();
+      form.append('file', blob, fileName);
+      form.append('filename', fileName);
+      const res = await fetch('/api/drive/upload', { method: 'POST', body: form });
+      if (res.ok) {
+        store.showToast('Saved to Drive ✓');
+      } else {
+        const info = await res.json() as { error: string };
+        if (res.status === 403) {
+          store.clearDriveConnection();
+          store.showToast('Drive disconnected — re-sign in with Google');
+        } else store.showToast(`Drive upload failed: ${info.error}`);
+      }
+    } catch {
+      store.showToast('Drive upload failed — try again');
+    } finally {
+      store.setExporting(false);
+    }
+  }, [renderBlob, store]);
 
   // ── Float toolbar for custom text layers ─────────────────────
   function floatTbStyle(): React.CSSProperties {
@@ -217,6 +217,7 @@ export function PinEditor() {
         state={state}
         store={store}
         onDownload={downloadPNG}
+        onSaveToDrive={saveToDrive}
         onOpenCrop={openCrop}
         onOpenCropLayer={openCropLayer}
         mobileActive={mobileTab === 'edit'}
