@@ -223,12 +223,12 @@ textarea.fi{min-height:48px;line-height:1.4;}
 .label-bottom{position:absolute;bottom:335px;left:48px;text-align:right;width:340px;overflow:hidden;max-height:400px;z-index:5;}
 
 /* Canvas typography */
-.txt-eye{font-family:'DM Sans',sans-serif;font-weight:400;font-size:10.5px;letter-spacing:3.5px;text-transform:uppercase;color:#b0a898;margin-bottom:10px;}
+.txt-eye{font-family:'DM Sans',sans-serif;font-weight:400;font-size:10.5px;letter-spacing:3.5px;text-transform:uppercase;color:#b0a898;margin-bottom:10px;white-space:pre-line;word-break:break-word;}
 .txt-brand{font-family:'Bodoni Moda',Georgia,serif;font-weight:700;font-size:50px;line-height:1;color:#1a1814;margin-bottom:6px;letter-spacing:-0.5px;white-space:pre-line;word-break:break-word;}
-.txt-model{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:400;font-size:17px;color:#7a7060;margin-bottom:14px;letter-spacing:0.2px;}
-.txt-price{font-family:'DM Sans',sans-serif;font-weight:500;font-size:15px;color:#5a5248;letter-spacing:0.5px;}
+.txt-model{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:400;font-size:17px;color:#7a7060;margin-bottom:14px;letter-spacing:0.2px;white-space:pre-line;word-break:break-word;}
+.txt-price{font-family:'DM Sans',sans-serif;font-weight:500;font-size:15px;color:#5a5248;letter-spacing:0.5px;white-space:pre-line;word-break:break-word;}
 .txt-dupe{font-family:'Bodoni Moda',Georgia,serif;font-weight:600;font-style:italic;font-size:42px;color:#2a6640;line-height:1;margin-bottom:6px;letter-spacing:-0.3px;word-break:break-word;}
-.txt-tag{font-family:'DM Sans',sans-serif;font-weight:300;font-size:11px;letter-spacing:2.8px;text-transform:uppercase;color:#aaa098;}
+.txt-tag{font-family:'DM Sans',sans-serif;font-weight:300;font-size:11px;letter-spacing:2.8px;text-transform:uppercase;color:#aaa098;white-space:pre-line;word-break:break-word;}
 .txt-div{width:40px;height:1px;background:#c8bfb0;margin:12px 0;}
 .label-bottom .txt-div{margin:12px 0 12px auto;}
 
@@ -484,11 +484,11 @@ textarea.fi{min-height:48px;line-height:1.4;}
 /* ========== 1-IMAGE TEMPLATE ========== */
 #layout-single{position:absolute;inset:0;}
 #single-labels{position:absolute;left:60px;right:60px;top:1060px;}
-.s-txt-eye{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:3.5px;text-transform:uppercase;color:#a09890;margin-bottom:12px;}
+.s-txt-eye{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:3.5px;text-transform:uppercase;color:#a09890;margin-bottom:12px;white-space:pre-line;word-break:break-word;}
 .s-txt-brand{font-family:'Bodoni Moda',Georgia,serif;font-weight:700;font-size:72px;line-height:1.0;color:#1a1814;margin-bottom:8px;letter-spacing:-0.5px;white-space:pre-line;word-break:break-word;}
 .s-txt-div{width:44px;height:1px;background:#c8bfb0;margin:14px 0;display:block;}
-.s-txt-model{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-size:22px;color:#7a7060;margin-bottom:16px;letter-spacing:0.2px;}
-.s-txt-price{font-family:'DM Sans',sans-serif;font-weight:500;font-size:20px;color:#5a5248;letter-spacing:0.5px;}
+.s-txt-model{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-size:22px;color:#7a7060;margin-bottom:16px;letter-spacing:0.2px;white-space:pre-line;word-break:break-word;}
+.s-txt-price{font-family:'DM Sans',sans-serif;font-weight:500;font-size:20px;color:#5a5248;letter-spacing:0.5px;white-space:pre-line;word-break:break-word;}
 
 /* ========== CUSTOM (FREE) CANVAS ========== */
 .img-layer{position:absolute;cursor:move;-webkit-user-select:none;user-select:none;touch-action:none;background-size:cover;background-position:center;background-repeat:no-repeat;}

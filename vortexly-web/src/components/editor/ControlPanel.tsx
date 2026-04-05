@@ -161,12 +161,16 @@ function ImageSection({ target, title, state, store, onOpenCrop }: ImageSectionP
 }
 
 // ── Text label row ────────────────────────────────────────────────
-function LabelField({ label, inputId, value, color, fontSize, minFs, maxFs, multiline,
+function LabelField({ label, inputId, value, color, fontSize,
   onText, onColor, onFs }: {
   label: string; inputId: string; value: string; color: string; fontSize: number;
-  minFs: number; maxFs: number; multiline?: boolean;
   onText: (v: string) => void; onColor: (v: string) => void; onFs: (v: number) => void;
 }) {
+  function handleKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+    }
+  }
   return (
     <>
       <div className="fr">
@@ -175,18 +179,13 @@ function LabelField({ label, inputId, value, color, fontSize, minFs, maxFs, mult
           <input type="color" className="lbl-swatch" value={color} aria-label={`${label} color`}
             onChange={e => onColor(e.target.value)} />
         </div>
-        {multiline ? (
-          <textarea className="fi" id={inputId} value={value} placeholder={label} aria-label={label}
-            onChange={e => onText(e.target.value)} />
-        ) : (
-          <input className="fi" id={inputId} type="text" value={value} placeholder={label} aria-label={label}
-            onChange={e => onText(e.target.value)} />
-        )}
+        <textarea className="fi" id={inputId} value={value} placeholder={label} aria-label={label}
+          onChange={e => onText(e.target.value)} onKeyDown={handleKey} />
       </div>
       <div className="fr">
         <label className="fl" htmlFor={`fs-${inputId}`}>{label} size</label>
         <div className="adj-row">
-          <input type="range" className="adj-slider" id={`fs-${inputId}`} min={minFs} max={maxFs} value={fontSize}
+          <input type="range" className="adj-slider" id={`fs-${inputId}`} min={6} max={200} value={fontSize}
             aria-label={`${label} font size`} onChange={e => onFs(Number(e.target.value))} />
           <span className="adj-val">{fontSize}px</span>
         </div>
@@ -401,10 +400,10 @@ export function ControlPanel({
 
         <AccordionSec title="Item A — Labels" id="sec-top-labels">
           <div className="fields">
-            <LabelField label="Category"  inputId="top-eye"   value={tl.topEye.text}   color={tl.topEye.color}   fontSize={tl.topEye.fontSize}   minFs={6}  maxFs={30}  onText={v => store.setTwoLabel('topEye',  { text: v })} onColor={v => store.setTwoLabel('topEye',  { color: v })} onFs={v => store.setTwoLabel('topEye',  { fontSize: v })} />
-            <LabelField label="Title"     inputId="top-brand" value={tl.topBrand.text} color={tl.topBrand.color} fontSize={tl.topBrand.fontSize} minFs={20} maxFs={80}  onText={v => store.setTwoLabel('topBrand',{ text: v })} onColor={v => store.setTwoLabel('topBrand',{ color: v })} onFs={v => store.setTwoLabel('topBrand',{ fontSize: v })} multiline />
-            <LabelField label="Subtitle"  inputId="top-model" value={tl.topModel.text} color={tl.topModel.color} fontSize={tl.topModel.fontSize} minFs={8}  maxFs={50}  onText={v => store.setTwoLabel('topModel',{ text: v })} onColor={v => store.setTwoLabel('topModel',{ color: v })} onFs={v => store.setTwoLabel('topModel',{ fontSize: v })} />
-            <LabelField label="Price"     inputId="top-price" value={tl.topPrice.text} color={tl.topPrice.color} fontSize={tl.topPrice.fontSize} minFs={8}  maxFs={50}  onText={v => store.setTwoLabel('topPrice',{ text: v })} onColor={v => store.setTwoLabel('topPrice',{ color: v })} onFs={v => store.setTwoLabel('topPrice',{ fontSize: v })} />
+            <LabelField label="Category"  inputId="top-eye"   value={tl.topEye.text}   color={tl.topEye.color}   fontSize={tl.topEye.fontSize}   onText={v => store.setTwoLabel('topEye',  { text: v })} onColor={v => store.setTwoLabel('topEye',  { color: v })} onFs={v => store.setTwoLabel('topEye',  { fontSize: v })} />
+            <LabelField label="Title"     inputId="top-brand" value={tl.topBrand.text} color={tl.topBrand.color} fontSize={tl.topBrand.fontSize} onText={v => store.setTwoLabel('topBrand',{ text: v })} onColor={v => store.setTwoLabel('topBrand',{ color: v })} onFs={v => store.setTwoLabel('topBrand',{ fontSize: v })} />
+            <LabelField label="Subtitle"  inputId="top-model" value={tl.topModel.text} color={tl.topModel.color} fontSize={tl.topModel.fontSize} onText={v => store.setTwoLabel('topModel',{ text: v })} onColor={v => store.setTwoLabel('topModel',{ color: v })} onFs={v => store.setTwoLabel('topModel',{ fontSize: v })} />
+            <LabelField label="Price"     inputId="top-price" value={tl.topPrice.text} color={tl.topPrice.color} fontSize={tl.topPrice.fontSize} onText={v => store.setTwoLabel('topPrice',{ text: v })} onColor={v => store.setTwoLabel('topPrice',{ color: v })} onFs={v => store.setTwoLabel('topPrice',{ fontSize: v })} />
           </div>
         </AccordionSec>
 
@@ -412,11 +411,11 @@ export function ControlPanel({
 
         <AccordionSec title="Item B — Labels" id="sec-bot-labels">
           <div className="fields">
-            <LabelField label="Category"  inputId="bot-eye"   value={tl.botEye.text}   color={tl.botEye.color}   fontSize={tl.botEye.fontSize}   minFs={6}  maxFs={30}  onText={v => store.setTwoLabel('botEye',  { text: v })} onColor={v => store.setTwoLabel('botEye',  { color: v })} onFs={v => store.setTwoLabel('botEye',  { fontSize: v })} />
-            <LabelField label="Title"     inputId="bot-brand" value={tl.botBrand.text} color={tl.botBrand.color} fontSize={tl.botBrand.fontSize} minFs={20} maxFs={80}  onText={v => store.setTwoLabel('botBrand',{ text: v })} onColor={v => store.setTwoLabel('botBrand',{ color: v })} onFs={v => store.setTwoLabel('botBrand',{ fontSize: v })} multiline />
-            <LabelField label="Subtitle"  inputId="bot-model" value={tl.botModel.text} color={tl.botModel.color} fontSize={tl.botModel.fontSize} minFs={8}  maxFs={50}  onText={v => store.setTwoLabel('botModel',{ text: v })} onColor={v => store.setTwoLabel('botModel',{ color: v })} onFs={v => store.setTwoLabel('botModel',{ fontSize: v })} />
-            <LabelField label="Price"     inputId="bot-price" value={tl.botPrice.text} color={tl.botPrice.color} fontSize={tl.botPrice.fontSize} minFs={16} maxFs={80}  onText={v => store.setTwoLabel('botPrice',{ text: v })} onColor={v => store.setTwoLabel('botPrice',{ color: v })} onFs={v => store.setTwoLabel('botPrice',{ fontSize: v })} />
-            <LabelField label="Caption"   inputId="bot-tag"   value={tl.botTag.text}   color={tl.botTag.color}   fontSize={tl.botTag.fontSize}   minFs={6}  maxFs={30}  onText={v => store.setTwoLabel('botTag',  { text: v })} onColor={v => store.setTwoLabel('botTag',  { color: v })} onFs={v => store.setTwoLabel('botTag',  { fontSize: v })} />
+            <LabelField label="Category"  inputId="bot-eye"   value={tl.botEye.text}   color={tl.botEye.color}   fontSize={tl.botEye.fontSize}   onText={v => store.setTwoLabel('botEye',  { text: v })} onColor={v => store.setTwoLabel('botEye',  { color: v })} onFs={v => store.setTwoLabel('botEye',  { fontSize: v })} />
+            <LabelField label="Title"     inputId="bot-brand" value={tl.botBrand.text} color={tl.botBrand.color} fontSize={tl.botBrand.fontSize} onText={v => store.setTwoLabel('botBrand',{ text: v })} onColor={v => store.setTwoLabel('botBrand',{ color: v })} onFs={v => store.setTwoLabel('botBrand',{ fontSize: v })} />
+            <LabelField label="Subtitle"  inputId="bot-model" value={tl.botModel.text} color={tl.botModel.color} fontSize={tl.botModel.fontSize} onText={v => store.setTwoLabel('botModel',{ text: v })} onColor={v => store.setTwoLabel('botModel',{ color: v })} onFs={v => store.setTwoLabel('botModel',{ fontSize: v })} />
+            <LabelField label="Price"     inputId="bot-price" value={tl.botPrice.text} color={tl.botPrice.color} fontSize={tl.botPrice.fontSize} onText={v => store.setTwoLabel('botPrice',{ text: v })} onColor={v => store.setTwoLabel('botPrice',{ color: v })} onFs={v => store.setTwoLabel('botPrice',{ fontSize: v })} />
+            <LabelField label="Caption"   inputId="bot-tag"   value={tl.botTag.text}   color={tl.botTag.color}   fontSize={tl.botTag.fontSize}   onText={v => store.setTwoLabel('botTag',  { text: v })} onColor={v => store.setTwoLabel('botTag',  { color: v })} onFs={v => store.setTwoLabel('botTag',  { fontSize: v })} />
           </div>
         </AccordionSec>
 
@@ -464,10 +463,10 @@ export function ControlPanel({
 
         <AccordionSec title="Labels" id="sec-one-labels">
           <div className="fields">
-            <LabelField label="Category"  inputId="s-eye"   value={ol.eye.text}   color={ol.eye.color}   fontSize={ol.eye.fontSize}   minFs={6}  maxFs={30}  onText={v => store.setOneLabel('eye',  { text: v })} onColor={v => store.setOneLabel('eye',  { color: v })} onFs={v => store.setOneLabel('eye',  { fontSize: v })} />
-            <LabelField label="Title"     inputId="s-brand" value={ol.brand.text} color={ol.brand.color} fontSize={ol.brand.fontSize} minFs={20} maxFs={100} onText={v => store.setOneLabel('brand',{ text: v })} onColor={v => store.setOneLabel('brand',{ color: v })} onFs={v => store.setOneLabel('brand',{ fontSize: v })} multiline />
-            <LabelField label="Subtitle"  inputId="s-model" value={ol.model.text} color={ol.model.color} fontSize={ol.model.fontSize} minFs={8}  maxFs={50}  onText={v => store.setOneLabel('model',{ text: v })} onColor={v => store.setOneLabel('model',{ color: v })} onFs={v => store.setOneLabel('model',{ fontSize: v })} />
-            <LabelField label="Price"     inputId="s-price" value={ol.price.text} color={ol.price.color} fontSize={ol.price.fontSize} minFs={8}  maxFs={50}  onText={v => store.setOneLabel('price',{ text: v })} onColor={v => store.setOneLabel('price',{ color: v })} onFs={v => store.setOneLabel('price',{ fontSize: v })} />
+            <LabelField label="Category"  inputId="s-eye"   value={ol.eye.text}   color={ol.eye.color}   fontSize={ol.eye.fontSize}   onText={v => store.setOneLabel('eye',  { text: v })} onColor={v => store.setOneLabel('eye',  { color: v })} onFs={v => store.setOneLabel('eye',  { fontSize: v })} />
+            <LabelField label="Title"     inputId="s-brand" value={ol.brand.text} color={ol.brand.color} fontSize={ol.brand.fontSize} onText={v => store.setOneLabel('brand',{ text: v })} onColor={v => store.setOneLabel('brand',{ color: v })} onFs={v => store.setOneLabel('brand',{ fontSize: v })} />
+            <LabelField label="Subtitle"  inputId="s-model" value={ol.model.text} color={ol.model.color} fontSize={ol.model.fontSize} onText={v => store.setOneLabel('model',{ text: v })} onColor={v => store.setOneLabel('model',{ color: v })} onFs={v => store.setOneLabel('model',{ fontSize: v })} />
+            <LabelField label="Price"     inputId="s-price" value={ol.price.text} color={ol.price.color} fontSize={ol.price.fontSize} onText={v => store.setOneLabel('price',{ text: v })} onColor={v => store.setOneLabel('price',{ color: v })} onFs={v => store.setOneLabel('price',{ fontSize: v })} />
           </div>
           <div className="sal-row sal-row--mt" role="group" aria-label="Label text alignment">
             {(['left','center','right'] as const).map(a => (
