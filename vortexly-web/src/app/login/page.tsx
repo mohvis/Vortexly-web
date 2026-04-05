@@ -14,7 +14,7 @@ export default function LoginPage() {
 
           <div className="auth-heading-block">
             <p className="eyebrow">Pin Editor</p>
-            <h1>Create stunning watch comparison pins.</h1>
+            <h1>Create stunning comparison pins for anything.</h1>
             <p className="auth-sub">
               Sign in to save your projects, export in hi&#8209;res, and sync to Google Drive.
             </p>
@@ -33,7 +33,7 @@ export default function LoginPage() {
         <div className="auth-demo-frame">
           <Image
             src="/demo-pin.png"
-            alt="Sample watch comparison pin made with Vortexly"
+            alt="Sample comparison pin made with Vortexly"
             fill
             className="auth-demo-image"
             sizes="(max-width: 768px) 100vw, 50vw"

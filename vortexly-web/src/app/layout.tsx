@@ -14,7 +14,7 @@ const fraunces = Fraunces({
 
 export const metadata: Metadata = {
   title: "Vortexly PinEditor",
-  description: "Production workspace for creating, exporting, and syncing watch pin campaigns.",
+  description: "Create stunning comparison pins for Pinterest. Side-by-side layouts, freeform canvas, hi-res export, and Google Drive sync.",
   icons: {
     icon: [
       { url: "/logo.png", type: "image/png" },

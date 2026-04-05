@@ -8,7 +8,7 @@ import type {
 } from '@/types/editor';
 import { DEFAULT_IMAGE_SLOT, DEFAULT_STATE } from '@/types/editor';
 
-const LS_KEY = 'watchpin_state_v4';
+const LS_KEY = 'vortexlypin_state_v5';
 const SAVE_DEBOUNCE_MS = 500;
 const CLOUD_DEBOUNCE_MS = 2000;
 

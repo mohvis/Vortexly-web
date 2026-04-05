@@ -21,14 +21,14 @@ export default async function Home() {
 
       <section className="landing-hero">
         <div className="landing-hero-text">
-          <p className="landing-eyebrow">Watch Pin Editor</p>
+          <p className="landing-eyebrow">Pin Editor</p>
           <h1 className="landing-h1">
             Create stunning<br />
-            watch comparison<br />
+            comparison<br />
             <em>pins for Pinterest.</em>
           </h1>
           <p className="landing-lead">
-            Professional 1000&thinsp;&times;&thinsp;1500px pin layouts — two-watch comparisons,
+            Professional 1000&thinsp;&times;&thinsp;1500px pin layouts — side-by-side comparisons,
             single spotlights, and a freeform canvas. Export PNG or JPEG in seconds.
           </p>
           <div className="landing-cta-row">
@@ -39,7 +39,7 @@ export default async function Home() {
         <div className="landing-hero-canvas">
           <Image
             src="/demo-pin.png"
-            alt="Sample watch comparison pin made with Vortexly"
+            alt="Sample comparison pin made with Vortexly"
             fill
             sizes="(max-width: 768px) 90vw, 44vw"
             className="landing-demo-img"
@@ -51,8 +51,8 @@ export default async function Home() {
       <section className="landing-features">
         <div className="lf-card">
           <div className="lf-icon">⧖</div>
-          <h3>2-Watch Comparisons</h3>
-          <p>Side-by-side brand vs. brand layouts with swirl arrows, labels, and auto-sizing.</p>
+          <h3>Side-by-Side Comparisons</h3>
+          <p>Two-item layouts with connector arrows, labels, and auto-sizing — compare anything.</p>
         </div>
         <div className="lf-card">
           <div className="lf-icon">◈</div>
